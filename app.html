@@ -1,262 +1,181 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Area de Membros | Calistenia 21 Dias</title>
-      <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-      <style>
-                :root {
-                              --primary: #ff4d00;
-                              --bg: #0a0a0a;
-                              --card: #161616;
-                              --text: #ffffff;
-                              --gray: #888;
-                              --accent: #00ff88;
-                }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Calistenia Pro</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #ff4d00; --bg: #0a0a0a; --card: #161616; --text: #fff; --gray: #888; --accent: #00ff88; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        
+        .screen { display: none; width: 100%; max-width: 500px; padding: 20px; animation: fadeIn 0.3s ease-in-out; }
+        .active { display: flex; flex-direction: column; }
+        @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
 
-                * { margin: 0; padding: 0; box-sizing: border-box; }
-                body { 
-                              font-family: 'Inter', sans-serif; 
-                              background-color: var(--bg); 
-                              color: var(--text); 
-                              display: flex; 
-                              flex-direction: column; 
-                              align-items: center; 
-                              min-height: 100vh;
-                }
+        header { padding: 40px 0; text-align: center; width: 100%; }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; letter-spacing: 2px; }
 
-                .screen { display: none; width: 100%; max-width: 500px; padding: 20px; animation: fadeIn 0.4s ease-out; }
-                .active { display: flex; flex-direction: column; align-items: center; }
+        .card { background: var(--card); border-radius: 20px; padding: 30px; border: 1px solid #222; width: 100%; margin-bottom: 20px; text-align: center; }
+        input { width: 100%; padding: 15px; margin: 10px 0; background: #222; border: 1px solid #333; border-radius: 12px; color: #fff; font-size: 1rem; }
+        
+        button { width: 100%; padding: 20px; background: var(--primary); border: none; border-radius: 15px; color: #fff; font-weight: 900; font-size: 1.1rem; cursor: pointer; box-shadow: 0 10px 20px rgba(255,77,0,0.2); transition: 0.3s; }
+        button:hover { transform: scale(1.02); }
+        button.secondary { background: #333; box-shadow: none; margin-bottom: 10px; }
 
-                @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* EXERCISE LIST */
+        .ex-card { background: #111; border-radius: 15px; padding: 20px; margin-bottom: 15px; border-left: 4px solid var(--primary); width: 100%; position: relative; }
+        .ex-card h3 { font-size: 1.1rem; margin-bottom: 5px; color: #fff; }
+        .ex-card p { color: var(--gray); font-size: 0.9rem; line-height: 1.4; margin-bottom: 10px; }
+        .tag { position: absolute; top: 20px; right: 20px; font-size: 0.6rem; background: rgba(0,255,136,0.1); color: var(--accent); padding: 4px 10px; border-radius: 20px; font-weight: bold; }
 
-                header { width: 100%; padding: 20px 0; text-align: center; margin-bottom: 20px; }
-                h1 { font-size: 1.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; }
+        .video-box { width: 100%; height: 230px; background: #000; border-radius: 10px; overflow: hidden; margin-top: 10px; display: none; border: 1px solid #333; }
+        .video-box iframe { width: 100%; height: 100%; border: none; }
 
-                .card { background: var(--card); padding: 25px; border-radius: 20px; width: 100%; border: 1px solid #222; text-align: center; }
-                input { width: 100%; padding: 15px; margin: 10px 0; background: #222; border: 1px solid #333; color: white; border-radius: 10px; font-size: 1rem; }
+        .progress-box { width: 100%; height: 8px; background: #222; border-radius: 5px; margin-bottom: 30px; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: 1s ease-in-out; }
+        
+        #timer { font-size: 3rem; font-weight: 900; color: var(--primary); font-family: 'Orbitron', sans-serif; margin: 20px 0; }
+        .btn-vid-toggle { color: var(--primary); font-size: 0.8rem; font-weight: bold; cursor: pointer; text-decoration: underline; margin-top: 5px; display: inline-block; }
+    </style>
+</head>
+<body>
 
-                button { 
-                              width: 100%; padding: 18px; margin-top: 15px; 
-                              background: var(--primary); color: white; border: none; border-radius: 12px; 
-                              font-size: 1.1rem; font-weight: bold; cursor: pointer; 
-                              box-shadow: 0 4px 15px rgba(255, 77, 0, 0.3);
-                }
-                button.secondary { background: #333; box-shadow: none; }
+    <!-- SCREEN 1: LOGIN -->
+    <div id="screen-login" class="screen active">
+        <header><h1>LOGIN <span>PRO</span></h1></header>
+        <div class="card">
+            <input type="email" id="email" placeholder="E-mail de acesso">
+            <button onclick="login()">ENTRAR AGORA</button>
+        </div>
+    </div>
 
-                .exercise-item {
-                              background: #111; border-radius: 15px; padding: 20px; margin-bottom: 15px;
-                              text-align: left; position: relative; border-left: 4px solid var(--primary);
-                              width: 100%;
-                }
+    <!-- SCREEN 2: AVALIAÇÃO -->
+    <div id="screen-assessment" class="screen">
+        <header><h1>AVALIAÇÃO</h1></header>
+        <div class="card" style="text-align: left;">
+            <p style="color:#888; margin-bottom: 20px;">Personalize seu sistema de proteção:</p>
+            <button class="secondary" onclick="setRestriction('ombro')">🦴 MEUS OMBROS</button>
+            <button class="secondary" onclick="setRestriction('joelho')">🦵 MEUS JOELHOS</button>
+            <button class="secondary" onclick="setRestriction('lombar')">🧘 MINHA LOMBAR</button>
+            <button style="background:var(--accent); color:#000;" onclick="setRestriction('none')">✅ SEM DORES</button>
+        </div>
+    </div>
 
-                .exercise-item h3 { color: white; margin-bottom: 5px; font-size: 1.1rem; }
-                .exercise-item p { color: #888; font-size: 0.9rem; line-height: 1.4; margin-bottom: 10px; }
+    <!-- SCREEN 3: DASHBOARD -->
+    <div id="screen-dashboard" class="screen">
+        <header style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="text-align:left;">
+                <h1 id="day-title">DIA 01</h1>
+                <p id="mode-label" style="color:var(--accent); font-size:0.7rem; font-weight:bold;"></p>
+            </div>
+            <span style="font-size:1.5rem; cursor:pointer;" onclick="showScreen('screen-assessment')">⚙️</span>
+        </header>
+        <div class="progress-box"><div class="progress-bar" id="pb"></div></div>
+        <div id="ex-list"></div>
+        <button onclick="finishDay()" style="margin-top:20px;">CONCLUIR TREINO</button>
+    </div>
 
-                .video-wrapper {
-                              width: 100%;
-                              height: 0;
-                              padding-bottom: 56.25%; /* 16:9 aspect ratio */
-                              position: relative;
-                              background: #000;
-                              border-radius: 10px;
-                              overflow: hidden;
-                              margin-top: 10px;
-                }
+    <!-- SCREEN 4: LOCK -->
+    <div id="screen-lock" class="screen">
+        <div class="card" style="margin-top:50px;">
+            <h2 style="margin-bottom:10px;">RECUPERAÇÃO</h2>
+            <p style="color:#888; font-size:0.9rem;">Próximo nível desbloqueia em:</p>
+            <div id="timer">00:00:00</div>
+            <button class="secondary" onclick="showScreen('screen-assessment')">ALTERAR RESTRIÇÃO</button>
+        </div>
+    </div>
 
-                .video-wrapper iframe {
-                              position: absolute;
-                              top: 0;
-                              left: 0;
-                              width: 100%;
-                              height: 100%;
-                              border: none;
-                }
+    <script>
+        // CONFIG SUPABASE (SUBSTITUA PELOS SEUS DADOS)
+        const S_URL = 'SUA_URL_AQUI';
+        const S_KEY = 'SUA_KEY_AQUI';
+        const supabase = window.supabase.createClient(S_URL, S_KEY);
 
-                .tag { 
-                              position: absolute; top: 15px; right: 15px; 
-                              background: rgba(0, 255, 136, 0.1); color: var(--accent); 
-                              font-size: 0.7rem; padding: 4px 8px; border-radius: 6px; font-weight: bold;
-                }
+        let u = { email: '', day: 1, limit: 'none', last: null };
 
-                .timer-display { font-size: 2.5rem; font-weight: 900; color: var(--primary); margin: 20px 0; }
-                .progress-container { width: 100%; background: #222; height: 6px; border-radius: 10px; margin: 20px 0; overflow: hidden; }
-                .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: 1s; }
+        function showScreen(id) { 
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
+            document.getElementById(id).classList.add('active'); 
+        }
 
-                .settings-link { color: var(--gray); font-size: 0.8rem; text-decoration: underline; cursor: pointer; margin-top: 10px; }
-            </style>
-  </head>
-  <body>
+        function login() {
+            const e = document.getElementById('email').value;
+            if (e.length < 3) return alert("E-mail inválido");
+            u.email = e;
+            const s = localStorage.getItem('calpro_' + e);
+            if(s) { u = JSON.parse(s); checkStatus(); } else { showScreen('screen-assessment'); }
+        }
 
-        <!-- TELA 1: LOGIN -->
-        <div id="screen-login" class="screen active">
-                  <header><h1>Calistenia 21 Dias</h1></header>
-                <div class="card">
-                            <h2>Acesse seu Desafio</h2>
-                            <input type="email" id="email" placeholder="Digite seu e-mail">
-                            <button onclick="login()">ENTRAR AGORA</button>button>
-                </div>div>
-        </div>div>
-  
-      <!-- TELA 2: AVALIACAO -->
-      <div id="screen-assessment" class="screen">
-              <header><h1>Diagnostico Inicial</h1></header>
-              <div class="card" style="text-align: left;">
-                          <p style="margin-bottom: 20px;">Personalize seu treino para evitar lesoes.</p>p>
-                          <h3>Voce possui alguma dor?</h3>
-                          <button class="secondary" onclick="setRestriction('ombro')">Meus Ombros</button>button>
-                          <button class="secondary" onclick="setRestriction('joelho')">Meus Joelhos</button>button>
-                          <button class="secondary" onclick="setRestriction('lombar')">Minha Lombar</button>button>
-                          <button style="background: var(--accent); color: #000;" onclick="setRestriction('none')">Nenhuma Dor</button>button>
-              </div>div>
-      </div>div>
-  
-      <!-- TELA 3: DASHBOARD -->
-      <div id="screen-dashboard" class="screen">
-              <header style="display: flex; justify-content: space-between; align-items: flex-start;">
-                          <div style="text-align: left;">
-                                          <h1>DIA <span id="day-number">1</span>span></h1>
-                                          <p id="user-restriction-label" style="color: var(--accent); font-size: 0.8rem;"></p>p>
-                                          <div class="settings-link" onclick="showScreen('screen-assessment')">Alterar Restricoes</div>div>
-                          </div>div>
-                          <span style="font-size: 1.5rem;">[FIRE]</span>span>
-              </header>
-              <div class="progress-container"><div class="progress-bar" id="main-progress"></div>div></div>div>
-              <div id="exercise-list" style="width: 100%;"></div>div>
-              <button onclick="finishWorkout()">CONCLUIR TREINO DO DIA</button>button>
-      </div>div>
-  
-      <!-- TELA 4: BLOQUEIO -->
-      <div id="screen-lock" class="screen">
-              <div class="card" style="margin-top: 50px;">
-                          <h2 style="margin-bottom: 15px;">Treino Concluido!</h2>
-                          <p>Seu proximo nivel sera desbloqueado em:</p>
-                          <div class="timer-display" id="timer">00:00:00</div>div>
-                          <div class="settings-link" onclick="showScreen('screen-assessment')">Alterar Restricoes</div>div>
-              </div>div>
-      </div>div>
-  
-      <script>
-                // CONFIG SUPABASE (Substitua pelos seus dados)
-                const SUPABASE_URL = 'SUA_URL_AQUI';
-                const SUPABASE_KEY = 'SUA_KEY_AQUI';
-                const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+        function setRestriction(l) { u.limit = l; save(); showScreen('screen-dashboard'); load(); }
 
-                let user = { email: '', currentDay: 1, restriction: 'none', lastCompleted: null };
+        async function load() {
+            const list = document.getElementById('ex-list');
+            list.innerHTML = '<p style="text-align:center; color:#444;">Sincronizando treinos...</p>';
+            
+            document.getElementById('day-title').innerText = `DIA ${u.day.toString().padStart(2, '0')}`;
+            document.getElementById('mode-label').innerText = `MODO: ${u.limit.toUpperCase()}`;
+            document.getElementById('pb').style.width = `${(u.day / 21) * 100}%`;
 
-                function showScreen(id) {
-                              document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-                              document.getElementById(id).classList.add('active');
-                }
+            const { data, error } = await supabase.from('exercicios').select('*').eq('dia', u.day);
+            if(error) return list.innerHTML = '<p>Erro de conexão.</p>';
 
-                function login() {
-                              const email = document.getElementById('email').value;
-                              if (email.length < 3) return alert("Digite um e-mail valido.");
-                              user.email = email;
-                              const saved = localStorage.getItem('cal_u_' + email);
-                              if (saved) {
-                                                user = JSON.parse(saved);
-                                                checkDailyStatus();
-                              } else {
-                                                showScreen('screen-assessment');
-                              }
-                }
+            list.innerHTML = '';
+            // Filtro de restrição
+            const filtered = data.filter(ex => ex.restricao !== u.limit);
 
-                function setRestriction(type) {
-                              user.restriction = type;
-                              saveUser();
-                              showScreen('screen-dashboard');
-                              loadWorkout();
-                }
+            filtered.forEach(ex => {
+                const vidId = getVidId(ex.video_url);
+                const item = document.createElement('div');
+                item.className = 'ex-card';
+                item.innerHTML = `
+                    <span class="tag">SEGURO</span>
+                    <h3>${ex.nome}</h3>
+                    <p>${ex.descricao || 'Execute com foco e controle.'}</p>
+                    ${vidId ? `<span class="btn-vid-toggle" onclick="toggleVid('${ex.id}')">▶ VER DEMONSTRAÇÃO</span><div class="video-box" id="vid-${ex.id}"><iframe src="https://www.youtube.com/embed/${vidId}" allowfullscreen></iframe></div>` : ''}
+                `;
+                list.appendChild(item);
+            });
+        }
 
-                async function loadWorkout() {
-                              const list = document.getElementById('exercise-list');
-                              list.innerHTML = '<p style="text-align:center;">Carregando treinos...</p>';
+        function toggleVid(id) {
+            const box = document.getElementById('vid-' + id);
+            box.style.display = box.style.display === 'block' ? 'none' : 'block';
+        }
 
-                              document.getElementById('day-number').innerText = user.currentDay;
-                              document.getElementById('user-restriction-label').innerText = `MODO: ${user.restriction.toUpperCase()}`;
-                              document.getElementById('main-progress').style.width = `${(user.currentDay / 21) * 100}%`;
+        function getVidId(url) {
+            if(!url) return null;
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
 
-                              if (!supabase) {
-                                                list.innerHTML = '<p>Erro: Supabase nao configurado.</p>';
-                                                return;
-                              }
+        function finishDay() {
+            u.last = new Date().toLocaleDateString();
+            u.day++;
+            save();
+            checkStatus();
+        }
 
-                              const { data: exercises, error } = await supabase
-                                  .from('exercicios')
-                                  .select('*')
-                                  .eq('day', user.currentDay);
+        function checkStatus() {
+            if (u.last === new Date().toLocaleDateString()) { showScreen('screen-lock'); startTimer(); } 
+            else { showScreen('screen-dashboard'); load(); }
+        }
 
-                              if (error) {
-                                                list.innerHTML = '<p>Erro ao buscar treinos.</p>';
-                                                return;
-                              }
+        function save() { localStorage.setItem('calpro_' + u.email, JSON.stringify(u)); }
 
-                              list.innerHTML = '';
-
-                              // Filtro de restricao
-                              const filtered = exercises.filter(ex => ex.avoid !== user.restriction);
-
-                              filtered.forEach(ex => {
-                                                const videoId = extractVideoID(ex.video_url);
-                                                const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}` : null;
-
-                                                const item = document.createElement('div');
-                                                item.className = 'exercise-item';
-                                                item.innerHTML = `
-                                                                    <span class="tag">SEGURO</span>
-                                                                                        <h3>${ex.name}</h3>
-                                                                                                            <p>${ex.description}</p>
-                                                                                                                                ${embedUrl ? `
-                                                                                                                                                        <div class="video-wrapper">
-                                                                                                                                                                                    <iframe src="${embedUrl}" allowfullscreen></iframe>
-                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                                ` : ''}
-                                                                                                                                                                                                                                                `;
-                                                list.appendChild(item);
-                              });
-                }
-
-                function extractVideoID(url) {
-                              if (!url) return null;
-                              const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-                              const match = url.match(regExp);
-                              return (match && match[2].length === 11) ? match[2] : null;
-                }
-
-                function finishWorkout() {
-                              user.lastCompleted = new Date().toLocaleDateString();
-                              user.currentDay++;
-                              saveUser();
-                              checkDailyStatus();
-                }
-
-                function checkDailyStatus() {
-                              const today = new Date().toLocaleDateString();
-                              if (user.lastCompleted === today) {
-                                                showScreen('screen-lock');
-                                                startTimer();
-                              } else {
-                                                showScreen('screen-dashboard');
-                                                loadWorkout();
-                              }
-                }
-
-                function saveUser() { localStorage.setItem('cal_u_' + user.email, JSON.stringify(user)); }
-
-                function startTimer() {
-                              setInterval(() => {
-                                                const now = new Date();
-                                                const midnight = new Date();
-                                                midnight.setHours(24, 0, 0, 0);
-                                                const diff = midnight - now;
-                                                if (diff <= 0) location.reload();
-                                                const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
-                                                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-                                                const s = Math.floor((diff % (1000 
-      </script></p></h2></h1></header>
-  </body>
-      </style></title>
-  </head>
+        function startTimer() {
+            setInterval(() => {
+                const diff = new Date().setHours(24,0,0,0) - new Date();
+                if(diff <= 0) location.reload();
+                const h = Math.floor(diff/3600000).toString().padStart(2,'0');
+                const m = Math.floor((diff%3600000)/60000).toString().padStart(2,'0');
+                const s = Math.floor((diff%60000)/1000).toString().padStart(2,'0');
+                document.getElementById('timer').innerText = `${h}:${m}:${s}`;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
