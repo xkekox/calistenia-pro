@@ -263,6 +263,7 @@
                 <div style="display:flex; gap:10px; flex-wrap:wrap;">
                     <button class="green" onclick="saveAllVideos()">SALVAR TODOS OS VIDEOS</button>
                     <button class="gray" onclick="exportDB()">EXPORTAR DATABASE.JS</button>
+                    <button style="background:#0066ff;" onclick="syncToGitHub()">🚀 PUBLICAR NO APP (SYNC)</button>
                 </div>
                 <div class="export-box" id="export-box"></div>
             </div>
@@ -356,6 +357,11 @@
             updateStats();
         }
 
+        function hasValidVideo(url) {
+            if (!url) return false;
+            return url.includes('youtu') || url.includes('tiktok.com');
+        }
+
         function renderTable(data) {
             var tbody = document.getElementById('table-body');
             tbody.innerHTML = '';
@@ -364,13 +370,13 @@
             data.forEach(function (ex) {
                 var tr = document.createElement('tr');
                 var restrictLabel = { none: 'Normal', ombro: 'Ombro', joelho: 'Joelho', lombar: 'Lombar' };
-                var hasVideo = ex.video_url && ex.video_url.length > 5;
+                var hasVideo = hasValidVideo(ex.video_url);
                 tr.innerHTML =
                     '<td><b>' + ex.day + '</b></td>' +
                     '<td>' + ex.type.toUpperCase() + '</td>' +
                     '<td>' + (restrictLabel[ex.avoid] || ex.avoid) + '</td>' +
                     '<td style="max-width:220px;">' + ex.name + '</td>' +
-                    '<td><input class="vid-input" data-id="' + ex.id + '" value="' + (ex.video_url || '') + '" placeholder="https://youtube.com/watch?v=..." oninput="onVideoEdit(this)"></td>' +
+                    '<td><input class="vid-input" data-id="' + ex.id + '" value="' + (ex.video_url || '') + '" placeholder="URL YouTube ou TikTok..." oninput="onVideoEdit(this)"></td>' +
                     '<td><span class="tag ' + (hasVideo ? 'ok' : 'missing') + '">' + (hasVideo ? 'OK' : 'FALTANDO') + '</span></td>';
                 tbody.appendChild(tr);
             });
@@ -382,7 +388,7 @@
             videoEdits[id] = val;
             // Update status tag in same row
             var tag = input.closest('tr').querySelector('.tag');
-            var hasVideo = val.length > 5;
+            var hasVideo = hasValidVideo(val);
             tag.className = 'tag ' + (hasVideo ? 'ok' : 'missing');
             tag.innerText = hasVideo ? 'OK' : 'FALTANDO';
         }
@@ -399,7 +405,7 @@
 
         function updateStats() {
             var total = window.exerciseDB.length;
-            var withVideo = window.exerciseDB.filter(function (e) { return e.video_url && e.video_url.length > 5; }).length;
+            var withVideo = window.exerciseDB.filter(function (e) { return hasValidVideo(e.video_url); }).length;
             var missing = total - withVideo;
             var pct = total > 0 ? Math.round((withVideo / total) * 100) : 0;
             document.getElementById('stat-total').innerText = total;
@@ -420,7 +426,7 @@
                 if (day && ex.day != day) return false;
                 if (type && ex.type !== type) return false;
                 if (avoid && ex.avoid !== avoid) return false;
-                var hasVideo = ex.video_url && ex.video_url.length > 5;
+                var hasVideo = hasValidVideo(ex.video_url);
                 if (video === 'missing' && hasVideo) return false;
                 if (video === 'ok' && !hasVideo) return false;
                 return true;
@@ -428,40 +434,40 @@
             renderTable(filtered);
         }
 
-        function exportDB() {
-            // Apply all edits
+        function getDBContent() {
             window.exerciseDB.forEach(function (ex) {
                 if (videoEdits[ex.id] !== undefined) ex.video_url = videoEdits[ex.id];
             });
-
             var lines = ['// BANCO DE DADOS ATUALIZADO - Calistenia Pro'];
             lines.push('// Gerado pelo Painel Admin em ' + new Date().toLocaleString());
             lines.push('');
             lines.push('window.exerciseDB = ' + JSON.stringify(window.exerciseDB, null, 2) + ';');
             lines.push('');
-            lines.push('function getWorkoutForDay(day, restriction) {');
+            lines.push('function getWorkoutForDay(day, restrictions) {');
+            lines.push('    if (!restrictions) restrictions = [];');
+            lines.push('    if (!Array.isArray(restrictions)) restrictions = [restrictions];');
             lines.push('    var tipos = ["push", "legs", "core", "cardio"];');
             lines.push('    return tipos.map(function(tipo) {');
             lines.push('        var specific = null, normal = null;');
             lines.push('        for (var i = 0; i < window.exerciseDB.length; i++) {');
             lines.push('            var e = window.exerciseDB[i];');
             lines.push('            if (e.day === day && e.type === tipo) {');
-            lines.push('                if (e.avoid === restriction) specific = e;');
+            lines.push('                if (restrictions.indexOf(e.avoid) >= 0) specific = e;');
             lines.push('                if (e.avoid === "none") normal = e;');
             lines.push('            }');
             lines.push('        }');
             lines.push('        return specific || normal;');
             lines.push('    });');
             lines.push('}');
+            return lines.join('\n');
+        }
 
-            var content = lines.join('\n');
-
-            // Show in box
+        function exportDB() {
+            var content = getDBContent();
             var box = document.getElementById('export-box');
             box.innerText = content;
             box.style.display = 'block';
 
-            // Download
             var blob = new Blob([content], { type: 'text/javascript' });
             var url = URL.createObjectURL(blob);
             var a = document.createElement('a');
@@ -469,8 +475,63 @@
             a.download = 'database.js';
             a.click();
             URL.revokeObjectURL(url);
+        }
 
-            alert('Arquivo database.js baixado! Agora suba ele no GitHub para atualizar o site.');
+        async function syncToGitHub() {
+            var token = localStorage.getItem('github_token');
+            if (!token) {
+                token = prompt('Para publicar direto no app pela internet, cole seu "GitHub Classic Token" (ex: ghp_xxxxxxxx) abaixo.\nOBS: Para sua seguranca este token ficara salvo apenas no seu navegador.');
+                if (!token) return;
+                localStorage.setItem('github_token', token);
+            }
+
+            var content = getDBContent();
+            // encode Base64 correctly (unicode safe)
+            var base64 = typeof btoa === "function" ? btoa(unescape(encodeURIComponent(content))) : content;
+
+            var REPO = 'xkekox/calistenia-pro';
+            var FILE = 'database.js';
+            var apiUrl = 'https://api.github.com/repos/' + REPO + '/contents/' + FILE;
+
+            alert('🌐 Iniciando sincronizacao... aguarde, nao feche a pagina.');
+
+            try {
+                // 1. Get file SHA
+                var getRes = await fetch(apiUrl, { headers: { 'Authorization': 'token ' + token } });
+                var sha = null;
+                if (getRes.ok) {
+                    var fileData = await getRes.json();
+                    sha = fileData.sha;
+                } else if (getRes.status !== 404) {
+                    throw new Error('Erro ao ler API: ' + getRes.statusText);
+                }
+
+                // 2. PUT File
+                var putRes = await fetch(apiUrl, {
+                    method: 'PUT',
+                    headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: 'Admin Panel Update database.js',
+                        content: base64,
+                        sha: sha,
+                        branch: 'main'
+                    })
+                });
+
+                if (putRes.ok) {
+                    alert('✅ SUCESSO! O app publico sera atualizado sozinho em ate 2 minutos.');
+                } else {
+                    var eData = await putRes.json();
+                    if (eData.message === 'Bad credentials') {
+                        localStorage.removeItem('github_token');
+                        alert('❌ Token GitHub invalido. Gere um novo token classico (com permissoes de repo) e tente de novo.');
+                    } else {
+                        throw new Error(eData.message);
+                    }
+                }
+            } catch (err) {
+                alert('Erro na sincronizacao: ' + err.message);
+            }
         }
     </script>
 </body>
