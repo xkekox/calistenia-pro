@@ -718,15 +718,19 @@
             var total = currentExercises.length;
             document.getElementById('ex-counter').innerText = 'EXERCICIO ' + (currentExIndex + 1) + ' DE ' + total;
 
-            var vidId = getVidId(ex.video_url);
+            var vidData = getVideoData(ex.video_url);
             var isAdapted = ex.avoid !== 'none';
             var tagText = isAdapted ? 'ADAPTADO' : 'SEGURO';
             var tagClass = isAdapted ? 'ex-tag adapted' : 'ex-tag';
             var videoHtml = '';
-            if (vidId) {
+            if (vidData) {
                 videoHtml = '<span class="vid-toggle" onclick="toggleVid(\'' + ex.id + '\')">&#9654; VER VIDEO</span>' +
-                    '<div class="vid-box" id="vid-' + ex.id + '">' +
-                    '<iframe src="https://www.youtube.com/embed/' + vidId + '" allowfullscreen></iframe></div>';
+                    '<div class="vid-box" id="vid-' + ex.id + '">';
+                if (vidData.type === 'youtube') {
+                    videoHtml += '<iframe src="https://www.youtube.com/embed/' + vidData.id + '" allowfullscreen></iframe></div>';
+                } else if (vidData.type === 'tiktok') {
+                    videoHtml += '<iframe src="https://www.tiktok.com/embed/v2/' + vidData.id + '" allowfullscreen></iframe></div>';
+                }
             }
             var html = '<div class="ex-card">' +
                 '<span class="' + tagClass + '">' + tagText + '</span>' +
@@ -792,10 +796,15 @@
             box.style.display = box.style.display === 'block' ? 'none' : 'block';
         }
 
-        function getVidId(url) {
+        function getVideoData(url) {
             if (!url) return null;
-            var m = url.match(/(?:youtu\.be\/|v\/|embed\/|watch\?v=|&v=)([^#&?]{11})/);
-            return m ? m[1] : null;
+            var mYT = url.match(/(?:youtu\.be\/|v\/|embed\/|watch\?v=|&v=)([^#&?]{11})/);
+            if (mYT) return { type: 'youtube', id: mYT[1] };
+
+            var mTT = url.match(/video\/(\d+)/);
+            if (mTT) return { type: 'tiktok', id: mTT[1] };
+
+            return null;
         }
 
         // ======================================================
