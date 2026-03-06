@@ -456,13 +456,8 @@
         <div class="card" style="margin-top: 40px;">
             <p class="card-title">Acesso ao Desafio</p>
             <p style="color:#888; font-size:0.9rem; margin-bottom:16px;">Digite o e-mail usado na sua compra:</p>
-            <form onsubmit="event.preventDefault(); login();" style="margin:0; padding:0;">
-                <input type="email" id="email" placeholder="seuemail@gmail.com" required>
-                <div id="login-error"
-                    style="color:var(--primary); font-size:0.8rem; margin-bottom:10px; display:none; font-weight:bold;">
-                </div>
-                <button type="submit" class="btn">ENTRAR AGORA</button>
-            </form>
+            <input type="email" id="email" placeholder="seuemail@gmail.com">
+            <button class="btn" onclick="login()">ENTRAR AGORA</button>
         </div>
     </div>
 
@@ -603,14 +598,7 @@
         // ======================================================
         function login() {
             var e = document.getElementById('email').value.trim();
-            var err = document.getElementById('login-error');
-
-            if (e.length < 5 || e.indexOf('@') < 0) {
-                err.innerText = 'Por favor, digite um e-mail valido.';
-                err.style.display = 'block';
-                return;
-            }
-            err.style.display = 'none';
+            if (e.length < 5 || e.indexOf('@') < 0) { alert('Digite um e-mail valido.'); return; }
             u.email = e;
             if (load(e)) {
                 // Usuario ja existe
