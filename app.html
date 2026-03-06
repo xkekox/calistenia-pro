@@ -735,10 +735,12 @@
             if (vidData) {
                 videoHtml = '<span class="vid-toggle" onclick="toggleVid(\'' + ex.id + '\')">&#9654; VER VIDEO</span>' +
                     '<div class="vid-box" id="vid-' + ex.id + '">';
+
                 if (vidData.type === 'youtube') {
-                    videoHtml += '<iframe src="https://www.youtube.com/embed/' + vidData.id + '" allowfullscreen></iframe></div>';
+                    videoHtml += '<iframe src="https://www.youtube.com/embed/' + vidData.id + '" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>';
                 } else if (vidData.type === 'tiktok') {
-                    videoHtml += '<iframe src="https://www.tiktok.com/embed/v2/' + vidData.id + '" allowfullscreen></iframe></div>';
+                    // Player V1 oficial do TikTok com suporte a metadados e escala mobile
+                    videoHtml += '<iframe src="https://www.tiktok.com/player/v1/' + vidData.id + '?music_info=1&description=1" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>';
                 }
             }
             var html = '<div class="ex-card">' +
@@ -807,11 +809,18 @@
 
         function getVideoData(url) {
             if (!url) return null;
+
+            // YOUTUBE
             var mYT = url.match(/(?:youtu\.be\/|v\/|embed\/|watch\?v=|&v=)([^#&?]{11})/);
             if (mYT) return { type: 'youtube', id: mYT[1] };
 
+            // TIKTOK (Links completos /video/ID)
             var mTT = url.match(/video\/(\d+)/);
             if (mTT) return { type: 'tiktok', id: mTT[1] };
+
+            // TIKTOK (Links curtos ex: tiktok.com/t/ABC ou /v/ABC)
+            var mTTShort = url.match(/tiktok\.com\/(?:t|v|embed)\/(\w+)/);
+            if (mTTShort) return { type: 'tiktok', id: mTTShort[1] };
 
             return null;
         }
