@@ -581,15 +581,34 @@
         function today() { return new Date().toLocaleDateString('pt-BR'); }
 
         function showScreen(id) {
+            const screen = document.getElementById(id);
+            if (!screen) {
+                console.error('[AIOS:DEV] Erro: Tela nao encontrada:', id);
+                return;
+            }
             document.querySelectorAll('.screen').forEach(function (s) { s.classList.remove('active'); });
-            document.getElementById(id).classList.add('active');
+            screen.classList.add('active');
         }
 
-        function save() { localStorage.setItem('calpro_' + u.email, JSON.stringify(u)); }
+        function save() {
+            try {
+                localStorage.setItem('calpro_' + u.email, JSON.stringify(u));
+            } catch (e) {
+                console.error('[AIOS:DEV] Falha ao salvar no localStorage:', e);
+            }
+        }
 
         function load(email) {
-            var saved = localStorage.getItem('calpro_' + email);
-            if (saved) { u = JSON.parse(saved); return true; }
+            try {
+                var saved = localStorage.getItem('calpro_' + email);
+                if (saved) { 
+                    u = JSON.parse(saved); 
+                    return true; 
+                }
+            } catch (e) {
+                console.error('[AIOS:DEV] Erro ao carregar dados do usuario (JSON corrompido). Resetando...', e);
+                localStorage.removeItem('calpro_' + email);
+            }
             return false;
         }
 
@@ -597,16 +616,34 @@
         // LOGIN
         // ======================================================
         function login() {
-            var e = document.getElementById('email').value.trim();
-            if (e.length < 5 || e.indexOf('@') < 0) { alert('Digite um e-mail valido.'); return; }
+            console.log('[AIOS:DEV] Iniciando processo de login...');
+            var emailInput = document.getElementById('email');
+            if (!emailInput) {
+                alert('Erro critico: Campo de email nao encontrado.');
+                return;
+            }
+
+            var e = emailInput.value.trim();
+            if (e.length < 5 || e.indexOf('@') < 0) { 
+                alert('Por favor, digite um e-mail valido.'); 
+                return; 
+            }
+
             u.email = e;
+            console.log('[AIOS:DEV] Email validado:', e);
+
             if (load(e)) {
-                // Usuario ja existe
-                if (u.assessmentDone) { openDashboard(); }
-                else { showScreen('screen-assessment'); }
+                console.log('[AIOS:DEV] Usuario carregado com sucesso.');
+                if (u.assessmentDone) { 
+                    openDashboard(); 
+                } else { 
+                    showScreen('screen-assessment'); 
+                }
             } else {
-                // Novo usuario
+                console.log('[AIOS:DEV] Novo usuario detectado ou erro no load. Iniciando avaliacao.');
                 u.email = e;
+                u.assessmentDone = false;
+                u.completedDays = {};
                 showScreen('screen-assessment');
             }
         }
