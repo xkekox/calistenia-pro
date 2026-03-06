@@ -687,11 +687,25 @@
         // DASHBOARD
         // ======================================================
         function openDashboard() {
-            document.getElementById('dash-email').innerText = u.email;
-            var completed = Object.keys(u.completedDays).length;
-            var pct = Math.round((completed / 21) * 100);
-            document.getElementById('prog-text').innerText = completed + ' / 21 dias';
-            document.getElementById('prog-bar').style.width = pct + '%';
+            console.log('[AIOS:DEV] Abrindo Dashboard...');
+            
+            // Garantia de integridade: se completedDays nao existir, inicializa como objeto vazio
+            if (!u.completedDays || typeof u.completedDays !== 'object') {
+                u.completedDays = {};
+            }
+
+            var emailTag = document.getElementById('dash-email');
+            if (emailTag) emailTag.innerText = u.email;
+
+            var completedCount = Object.keys(u.completedDays).length;
+            var pct = Math.round((completedCount / 21) * 100);
+            
+            var progText = document.getElementById('prog-text');
+            if (progText) progText.innerText = completedCount + ' / 21 dias';
+            
+            var progBar = document.getElementById('prog-bar');
+            if (progBar) progBar.style.width = pct + '%';
+
             renderDaysGrid();
             showScreen('screen-dashboard');
         }
