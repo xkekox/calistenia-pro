@@ -1,5 +1,5 @@
 // BANCO DE DADOS ATUALIZADO - Calistenia Pro
-// Gerado pelo Painel Admin em 06/03/2026, 09:47:17
+// Gerado pelo Painel Admin em 06/03/2026, 09:52:25
 
 window.exerciseDB = [
   {
@@ -477,7 +477,7 @@ window.exerciseDB = [
     "avoid": "none",
     "name": "Afundo Frontal - Dia 6",
     "desc": "3 series de 15-20 reps. Peso nos calcanhares, joelhos alinhados.",
-    "video_url": "https://www.youtube.com/watch?v=gtOP_C36d2s"
+    "video_url": "https://www.youtube.com/shorts/pRWq-RJbfjQ"
   },
   {
     "id": "d6_legs_joelho",
