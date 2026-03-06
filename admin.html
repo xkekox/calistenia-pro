@@ -264,6 +264,7 @@
                     <button class="green" onclick="saveAllVideos()">SALVAR TODOS OS VIDEOS</button>
                     <button class="gray" onclick="exportDB()">EXPORTAR DATABASE.JS</button>
                     <button style="background:#0066ff;" onclick="syncToGitHub()">🚀 PUBLICAR NO APP (SYNC)</button>
+                    <button class="gray" style="background:#d9534f;" onclick="resetToken()">🔄 RESETAR TOKEN</button>
                 </div>
                 <div class="export-box" id="export-box"></div>
             </div>
@@ -477,11 +478,17 @@
             URL.revokeObjectURL(url);
         }
 
+        function resetToken() {
+            localStorage.removeItem('github_token');
+            alert('🔄 Token apagado da memoria do navegador!\n\nAgora voce pode clicar em PUBLICAR para colar o novo codigo.');
+        }
+
         async function syncToGitHub() {
             var token = localStorage.getItem('github_token');
             if (!token) {
-                token = prompt('Para publicar direto no app pela internet, cole seu "GitHub Classic Token" (ex: ghp_xxxxxxxx) abaixo.\nOBS: Para sua seguranca este token ficara salvo apenas no seu navegador.');
+                token = prompt('Para publicar direto no app pela internet, cole seu "GitHub Classic Token" (ex: ghp_xxxxxxxx) abaixo.\nOBS: Para sua seguranca este token ficara salvo apenas no seu navegador.', '');
                 if (!token) return;
+                token = token.trim();
                 localStorage.setItem('github_token', token);
             }
 
