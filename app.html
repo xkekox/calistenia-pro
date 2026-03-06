@@ -364,7 +364,8 @@
 
         .vid-box {
             width: 100%;
-            height: 220px;
+            height: 500px;
+            /* Altura aumentada para formato 9:16 */
             background: #000;
             border-radius: 10px;
             overflow: hidden;
@@ -550,15 +551,27 @@
         </div>
     </div>
 
-    <!-- Script dinâmico para evitar cache -->
+    <!-- Script dinâmico para evitar cache e buscar versao remota se disponivel -->
     <script>
         (function () {
-            var s = document.createElement('script');
-            s.src = 'database.js?v=' + new Date().getTime();
-            s.onload = function () {
-                // Database is loaded, initialization can happen if needed
+            const REPO_URL = 'https://raw.githubusercontent.com/xkekox/calistenia-pro/main/database.js';
+            const localScript = 'database.js?v=' + new Date().getTime();
+
+            console.log('[AIOS:DEV] Tentando sincronizar banco de dados remoto...');
+
+            // Tenta carregar o banco remoto (GitHub) para ter os videos do Admin
+            var sRemoto = document.createElement('script');
+            sRemoto.src = REPO_URL + '?v=' + new Date().getTime();
+            sRemoto.onerror = function () {
+                console.warn('[AIOS:DEV] Falha ao carregar banco remoto. Usando banco local.');
+                var sLocal = document.createElement('script');
+                sLocal.src = localScript;
+                document.head.appendChild(sLocal);
             };
-            document.head.appendChild(s);
+            sRemoto.onload = function () {
+                console.log('[AIOS:DEV] Banco de dados remoto (GitHub) sincronizado com sucesso!');
+            };
+            document.head.appendChild(sRemoto);
         })();
 
         // ======================================================
@@ -601,9 +614,9 @@
         function load(email) {
             try {
                 var saved = localStorage.getItem('calpro_' + email);
-                if (saved) { 
-                    u = JSON.parse(saved); 
-                    return true; 
+                if (saved) {
+                    u = JSON.parse(saved);
+                    return true;
                 }
             } catch (e) {
                 console.error('[AIOS:DEV] Erro ao carregar dados do usuario (JSON corrompido). Resetando...', e);
@@ -624,9 +637,9 @@
             }
 
             var e = emailInput.value.trim();
-            if (e.length < 5 || e.indexOf('@') < 0) { 
-                alert('Por favor, digite um e-mail valido.'); 
-                return; 
+            if (e.length < 5 || e.indexOf('@') < 0) {
+                alert('Por favor, digite um e-mail valido.');
+                return;
             }
 
             u.email = e;
@@ -634,10 +647,10 @@
 
             if (load(e)) {
                 console.log('[AIOS:DEV] Usuario carregado com sucesso.');
-                if (u.assessmentDone) { 
-                    openDashboard(); 
-                } else { 
-                    showScreen('screen-assessment'); 
+                if (u.assessmentDone) {
+                    openDashboard();
+                } else {
+                    showScreen('screen-assessment');
                 }
             } else {
                 console.log('[AIOS:DEV] Novo usuario detectado ou erro no load. Iniciando avaliacao.');
@@ -688,7 +701,7 @@
         // ======================================================
         function openDashboard() {
             console.log('[AIOS:DEV] Abrindo Dashboard...');
-            
+
             // Garantia de integridade: se completedDays nao existir, inicializa como objeto vazio
             if (!u.completedDays || typeof u.completedDays !== 'object') {
                 u.completedDays = {};
@@ -699,10 +712,10 @@
 
             var completedCount = Object.keys(u.completedDays).length;
             var pct = Math.round((completedCount / 21) * 100);
-            
+
             var progText = document.getElementById('prog-text');
             if (progText) progText.innerText = completedCount + ' / 21 dias';
-            
+
             var progBar = document.getElementById('prog-bar');
             if (progBar) progBar.style.width = pct + '%';
 
