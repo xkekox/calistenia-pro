@@ -874,17 +874,25 @@
         function getVideoData(url) {
             if (!url) return null;
 
-            // YOUTUBE
+            // 1. Tenta tratar como URL de YOUTUBE
             var mYT = url.match(/(?:youtu\.be\/|v\/|embed\/|watch\?v=|&v=)([^#&?]{11})/);
             if (mYT) return { type: 'youtube', id: mYT[1] };
 
-            // TIKTOK (Links completos /video/ID)
+            // 2. Tenta tratar como URL de TIKTOK (Completa ou Curta)
             var mTT = url.match(/video\/(\d+)/);
             if (mTT) return { type: 'tiktok', id: mTT[1] };
-
-            // TIKTOK (Links curtos ex: tiktok.com/t/ABC ou /v/ABC)
             var mTTShort = url.match(/tiktok\.com\/(?:t|v|embed)\/(\w+)/);
             if (mTTShort) return { type: 'tiktok', id: mTTShort[1] };
+
+            // 3. FALLBACK: Se for um ID puro do YouTube (11 chars)
+            if (url.length === 11 && /^[a-zA-Z0-9_-]{11}$/.test(url)) {
+                return { type: 'youtube', id: url };
+            }
+            
+            // 4. FALLBACK: Se for um ID puro do TikTok (apenas numeros e longo)
+            if (/^\d{15,}$/.test(url)) {
+                return { type: 'tiktok', id: url };
+            }
 
             return null;
         }
