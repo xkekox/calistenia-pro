@@ -1,154 +1,313 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | Calistenia Pro</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
     <style>
-        :root { --primary: #ff4d00; --bg: #0a0a0a; --card: #161616; --text: #fff; --gray: #888; --accent: #00ff88; }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        
-        .screen { display: none; width: 100%; max-width: 500px; padding: 20px; animation: fadeIn 0.3s ease-in-out; }
-        .active { display: flex; flex-direction: column; }
-        @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+        :root {
+            --primary: #ff4d00;
+            --bg: #0a0a0a;
+            --card: #161616;
+            --text: #fff;
+            --gray: #888;
+            --accent: #00ff88;
+        }
 
-        header { padding: 40px 0; text-align: center; width: 100%; }
-        h1 { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; letter-spacing: 2px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        .card { background: var(--card); border-radius: 20px; padding: 30px; border: 1px solid #222; width: 100%; margin-bottom: 20px; text-align: center; }
-        input { width: 100%; padding: 15px; margin: 10px 0; background: #222; border: 1px solid #333; border-radius: 12px; color: #fff; font-size: 1rem; }
-        
-        button { width: 100%; padding: 20px; background: var(--primary); border: none; border-radius: 15px; color: #fff; font-weight: 900; font-size: 1.1rem; cursor: pointer; box-shadow: 0 10px 20px rgba(255,77,0,0.2); transition: 0.3s; }
-        button:hover { transform: scale(1.02); }
-        button.secondary { background: #333; box-shadow: none; margin-bottom: 10px; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-        /* EXERCISE LIST */
-        .ex-card { background: #111; border-radius: 15px; padding: 20px; margin-bottom: 15px; border-left: 4px solid var(--primary); width: 100%; position: relative; }
-        .ex-card h3 { font-size: 1.1rem; margin-bottom: 5px; color: #fff; }
-        .ex-card p { color: var(--gray); font-size: 0.9rem; line-height: 1.4; margin-bottom: 10px; }
-        .tag { position: absolute; top: 20px; right: 20px; font-size: 0.6rem; background: rgba(0,255,136,0.1); color: var(--accent); padding: 4px 10px; border-radius: 20px; font-weight: bold; }
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            animation: fadeIn 0.3s ease-in-out;
+        }
 
-        .video-box { width: 100%; height: 230px; background: #000; border-radius: 10px; overflow: hidden; margin-top: 10px; display: none; border: 1px solid #333; }
-        .video-box iframe { width: 100%; height: 100%; border: none; }
+        .active {
+            display: flex;
+            flex-direction: column;
+        }
 
-        .progress-box { width: 100%; height: 8px; background: #222; border-radius: 5px; margin-bottom: 30px; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: 1s ease-in-out; }
-        
-        #timer { font-size: 3rem; font-weight: 900; color: var(--primary); font-family: 'Orbitron', sans-serif; margin: 20px 0; }
-        .btn-vid-toggle { color: var(--primary); font-size: 0.8rem; font-weight: bold; cursor: pointer; text-decoration: underline; margin-top: 5px; display: inline-block; }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            padding: 40px 0;
+            text-align: center;
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid #222;
+            width: 100%;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 20px;
+            background: var(--primary);
+            border: none;
+            border-radius: 15px;
+            color: #fff;
+            font-weight: 900;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(255, 77, 0, 0.2);
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+        }
+
+        button.secondary {
+            background: #333;
+            box-shadow: none;
+            margin-bottom: 10px;
+        }
+
+        .ex-card {
+            background: #111;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary);
+            width: 100%;
+            position: relative;
+        }
+
+        .ex-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .ex-card p {
+            color: var(--gray);
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+
+        .tag {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 0.6rem;
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .video-box {
+            width: 100%;
+            height: 230px;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+            display: none;
+            border: 1px solid #333;
+        }
+
+        .video-box iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .progress-box {
+            width: 100%;
+            height: 8px;
+            background: #222;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: 1s ease-in-out;
+        }
+
+        #timer {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+            margin: 20px 0;
+        }
+
+        .btn-vid-toggle {
+            color: var(--primary);
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 5px;
+            display: inline-block;
+        }
     </style>
 </head>
+
 <body>
 
-    <!-- SCREEN 1: LOGIN -->
     <div id="screen-login" class="screen active">
-        <header><h1>LOGIN <span>PRO</span></h1></header>
+        <header>
+            <h1>LOGIN PRO</h1>
+        </header>
         <div class="card">
+            <p style="color:#888; margin-bottom: 10px;">Digite seu e-mail para acessar:</p>
             <input type="email" id="email" placeholder="E-mail de acesso">
             <button onclick="login()">ENTRAR AGORA</button>
         </div>
     </div>
 
-    <!-- SCREEN 2: AVALIAÇÃO -->
     <div id="screen-assessment" class="screen">
-        <header><h1>AVALIAÇÃO</h1></header>
+        <header>
+            <h1>AVALIACAO</h1>
+        </header>
         <div class="card" style="text-align: left;">
-            <p style="color:#888; margin-bottom: 20px;">Personalize seu sistema de proteção:</p>
-            <button class="secondary" onclick="setRestriction('ombro')">🦴 MEUS OMBROS</button>
-            <button class="secondary" onclick="setRestriction('joelho')">🦵 MEUS JOELHOS</button>
-            <button class="secondary" onclick="setRestriction('lombar')">🧘 MINHA LOMBAR</button>
-            <button style="background:var(--accent); color:#000;" onclick="setRestriction('none')">✅ SEM DORES</button>
+            <p style="color:#888; margin-bottom: 20px;">Personalize seu sistema de protecao:</p>
+            <button class="secondary" onclick="setRestriction('ombro')">MEUS OMBROS</button>
+            <button class="secondary" onclick="setRestriction('joelho')">MEUS JOELHOS</button>
+            <button class="secondary" onclick="setRestriction('lombar')">MINHA LOMBAR</button>
+            <button style="background:var(--accent); color:#000;" onclick="setRestriction('none')">SEM DORES</button>
         </div>
     </div>
 
-    <!-- SCREEN 3: DASHBOARD -->
     <div id="screen-dashboard" class="screen">
         <header style="display:flex; justify-content:space-between; align-items:center;">
             <div style="text-align:left;">
                 <h1 id="day-title">DIA 01</h1>
                 <p id="mode-label" style="color:var(--accent); font-size:0.7rem; font-weight:bold;"></p>
             </div>
-            <span style="font-size:1.5rem; cursor:pointer;" onclick="showScreen('screen-assessment')">⚙️</span>
+            <span style="font-size:1.5rem; cursor:pointer;" onclick="showScreen('screen-assessment')">&#x2699;</span>
         </header>
-        <div class="progress-box"><div class="progress-bar" id="pb"></div></div>
+        <div class="progress-box">
+            <div class="progress-bar" id="pb"></div>
+        </div>
         <div id="ex-list"></div>
         <button onclick="finishDay()" style="margin-top:20px;">CONCLUIR TREINO</button>
     </div>
 
-    <!-- SCREEN 4: LOCK -->
     <div id="screen-lock" class="screen">
         <div class="card" style="margin-top:50px;">
-            <h2 style="margin-bottom:10px;">RECUPERAÇÃO</h2>
-            <p style="color:#888; font-size:0.9rem;">Próximo nível desbloqueia em:</p>
+            <h2 style="margin-bottom:10px;">RECUPERACAO</h2>
+            <p style="color:#888; font-size:0.9rem;">Proximo nivel desbloqueia em:</p>
             <div id="timer">00:00:00</div>
-            <button class="secondary" onclick="showScreen('screen-assessment')">ALTERAR RESTRIÇÃO</button>
+            <button class="secondary" onclick="showScreen('screen-assessment')">ALTERAR RESTRICAO</button>
         </div>
     </div>
 
+    <script src="database.js"></script>
     <script>
-        // CONFIG SUPABASE (SUBSTITUA PELOS SEUS DADOS)
-        const S_URL = 'SUA_URL_AQUI';
-        const S_KEY = 'SUA_KEY_AQUI';
-        const supabase = window.supabase.createClient(S_URL, S_KEY);
-
         let u = { email: '', day: 1, limit: 'none', last: null };
 
-        function showScreen(id) { 
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
-            document.getElementById(id).classList.add('active'); 
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(function (s) { s.classList.remove('active'); });
+            document.getElementById(id).classList.add('active');
         }
 
         function login() {
-            const e = document.getElementById('email').value;
-            if (e.length < 3) return alert("E-mail inválido");
+            var e = document.getElementById('email').value;
+            if (e.length < 3) { alert('Digite um e-mail valido.'); return; }
             u.email = e;
-            const s = localStorage.getItem('calpro_' + e);
-            if(s) { u = JSON.parse(s); checkStatus(); } else { showScreen('screen-assessment'); }
+            var saved = localStorage.getItem('calpro_' + e);
+            if (saved) { u = JSON.parse(saved); checkStatus(); }
+            else { showScreen('screen-assessment'); }
         }
 
         function setRestriction(l) { u.limit = l; save(); showScreen('screen-dashboard'); load(); }
 
-        async function load() {
-            const list = document.getElementById('ex-list');
-            list.innerHTML = '<p style="text-align:center; color:#444;">Sincronizando treinos...</p>';
-            
-            document.getElementById('day-title').innerText = `DIA ${u.day.toString().padStart(2, '0')}`;
-            document.getElementById('mode-label').innerText = `MODO: ${u.limit.toUpperCase()}`;
-            document.getElementById('pb').style.width = `${(u.day / 21) * 100}%`;
-
-            const { data, error } = await supabase.from('exercicios').select('*').eq('dia', u.day);
-            if(error) return list.innerHTML = '<p>Erro de conexão.</p>';
-
+        function load() {
+            var list = document.getElementById('ex-list');
             list.innerHTML = '';
-            // Filtro de restrição
-            const filtered = data.filter(ex => ex.restricao !== u.limit);
+            document.getElementById('day-title').innerText = 'DIA ' + (u.day < 10 ? '0' + u.day : u.day);
+            document.getElementById('mode-label').innerText = 'MODO: ' + u.limit.toUpperCase();
+            document.getElementById('pb').style.width = ((u.day / 21) * 100) + '%';
 
-            filtered.forEach(ex => {
-                const vidId = getVidId(ex.video_url);
-                const item = document.createElement('div');
+            var exercises = getWorkoutForDay(u.day, u.limit);
+
+            exercises.forEach(function (ex) {
+                if (!ex) return;
+                var vidId = getVidId(ex.video_url);
+                var item = document.createElement('div');
                 item.className = 'ex-card';
-                item.innerHTML = `
-                    <span class="tag">SEGURO</span>
-                    <h3>${ex.nome}</h3>
-                    <p>${ex.descricao || 'Execute com foco e controle.'}</p>
-                    ${vidId ? `<span class="btn-vid-toggle" onclick="toggleVid('${ex.id}')">▶ VER DEMONSTRAÇÃO</span><div class="video-box" id="vid-${ex.id}"><iframe src="https://www.youtube.com/embed/${vidId}" allowfullscreen></iframe></div>` : ''}
-                `;
+                var videoHtml = '';
+                if (vidId) {
+                    videoHtml = '<span class="btn-vid-toggle" onclick="toggleVid(\'' + ex.id + '\')">&#9654; VER DEMONSTRACAO</span>' +
+                        '<div class="video-box" id="vid-' + ex.id + '">' +
+                        '<iframe src="https://www.youtube.com/embed/' + vidId + '" allowfullscreen></iframe></div>';
+                }
+                item.innerHTML = '<span class="tag">SEGURO</span><h3>' + ex.name + '</h3><p>' + ex.desc + '</p>' + videoHtml;
                 list.appendChild(item);
             });
         }
 
         function toggleVid(id) {
-            const box = document.getElementById('vid-' + id);
+            var box = document.getElementById('vid-' + id);
             box.style.display = box.style.display === 'block' ? 'none' : 'block';
         }
 
         function getVidId(url) {
-            if(!url) return null;
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp);
+            if (!url) return null;
+            var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            var match = url.match(regExp);
             return (match && match[2].length === 11) ? match[2] : null;
         }
 
@@ -160,22 +319,24 @@
         }
 
         function checkStatus() {
-            if (u.last === new Date().toLocaleDateString()) { showScreen('screen-lock'); startTimer(); } 
+            if (u.last === new Date().toLocaleDateString()) { showScreen('screen-lock'); startTimer(); }
             else { showScreen('screen-dashboard'); load(); }
         }
 
         function save() { localStorage.setItem('calpro_' + u.email, JSON.stringify(u)); }
 
         function startTimer() {
-            setInterval(() => {
-                const diff = new Date().setHours(24,0,0,0) - new Date();
-                if(diff <= 0) location.reload();
-                const h = Math.floor(diff/3600000).toString().padStart(2,'0');
-                const m = Math.floor((diff%3600000)/60000).toString().padStart(2,'0');
-                const s = Math.floor((diff%60000)/1000).toString().padStart(2,'0');
-                document.getElementById('timer').innerText = `${h}:${m}:${s}`;
+            setInterval(function () {
+                var diff = new Date().setHours(24, 0, 0, 0) - new Date();
+                if (diff <= 0) { location.reload(); return; }
+                var h = Math.floor(diff / 3600000);
+                var m = Math.floor((diff % 3600000) / 60000);
+                var s = Math.floor((diff % 60000) / 1000);
+                document.getElementById('timer').innerText =
+                    (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
             }, 1000);
         }
     </script>
 </body>
+
 </html>
