@@ -550,8 +550,17 @@
         </div>
     </div>
 
-    <script src="database.js"></script>
+    <!-- Script dinâmico para evitar cache -->
     <script>
+        (function () {
+            var s = document.createElement('script');
+            s.src = 'database.js?v=' + new Date().getTime();
+            s.onload = function () {
+                // Database is loaded, initialization can happen if needed
+            };
+            document.head.appendChild(s);
+        })();
+
         // ======================================================
         // ESTADO DO USUARIO
         // ======================================================
