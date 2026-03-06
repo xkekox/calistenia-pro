@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Admin | Calistenia Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4d00;
+            --bg: #0a0a0a;
+            --card: #161616;
+            --text: #ffffff;
+            --accent: #00ff88;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid #222;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background: #222;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        button {
+            padding: 14px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        button.green {
+            background: #00aa55;
+        }
+
+        button.gray {
+            background: #444;
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-bar input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #222;
+        }
+
+        th {
+            background: #1a1a1a;
+            color: var(--primary);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+        }
+
+        tr:hover {
+            background: #1c1c1c;
+        }
+
+        .tag {
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .ok {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--accent);
+        }
+
+        .missing {
+            background: rgba(255, 77, 0, 0.15);
+            color: var(--primary);
+        }
+
+        .vid-input {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #aaa;
+            border-radius: 6px;
+            padding: 6px 10px;
+            width: 100%;
+            min-width: 180px;
+            font-size: 0.8rem;
+        }
+
+        .vid-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            color: white;
+        }
+
+        #login-section {
+            max-width: 380px;
+            margin: 100px auto;
+            text-align: center;
+        }
+
+        #login-section input {
+            margin: 15px 0;
+        }
+
+        #login-section button {
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .stats {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px 20px;
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .stat .num {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .stat .label {
+            font-size: 0.7rem;
+            color: #888;
+            margin-top: 3px;
+        }
+
+        .export-box {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #0f0;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 15px;
+            display: none;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-row select {
+            width: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- LOGIN -->
+        <div id="login-section" class="card">
+            <h1>ADMIN | Calistenia Pro</h1>
+            <p style="color:#888; margin-bottom:10px; font-size:0.9rem;">Acesso restrito ao administrador</p>
+            <input type="password" id="admin-pass" placeholder="Senha do sistema"
+                onkeydown="if(event.key==='Enter') checkAdmin()">
+            <button onclick="checkAdmin()">ENTRAR</button>
+        </div>
+
+        <!-- PAINEL PRINCIPAL -->
+        <div id="main-panel" style="display:none;">
+
+            <div class="card">
+                <h1>PAINEL DE CONTROLE</h1>
+                <div class="stats">
+                    <div class="stat">
+                        <div class="num" id="stat-total">0</div>
+                        <div class="label">TOTAL</div>
+                    </div>
+                    <div class="stat">
+                        <div class="num" id="stat-videos">0</div>
+                        <div class="label">COM VIDEO</div>
+                    </div>
+                    <div class="stat">
+                        <div class="num" id="stat-missing">0</div>
+                        <div class="label">SEM VIDEO</div>
+                    </div>
+                    <div class="stat">
+                        <div class="num" id="stat-pct">0%</div>
+                        <div class="label">COMPLETO</div>
+                    </div>
+                </div>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <button class="green" onclick="saveAllVideos()">SALVAR TODOS OS VIDEOS</button>
+                    <button class="gray" onclick="exportDB()">EXPORTAR DATABASE.JS</button>
+                </div>
+                <div class="export-box" id="export-box"></div>
+            </div>
+
+            <div class="card">
+                <h1>BIBLIOTECA DE EXERCICIOS (<span id="count">0</span>)</h1>
+                <div class="search-bar">
+                    <input type="text" id="search" placeholder="Buscar por nome..." oninput="filterTable()">
+                    <div class="filter-row">
+                        <select id="filter-day" onchange="filterTable()">
+                            <option value="">Todos os Dias</option>
+                        </select>
+                        <select id="filter-type" onchange="filterTable()">
+                            <option value="">Todos os Tipos</option>
+                            <option value="push">Push</option>
+                            <option value="legs">Legs</option>
+                            <option value="core">Core</option>
+                            <option value="cardio">Cardio</option>
+                        </select>
+                        <select id="filter-avoid" onchange="filterTable()">
+                            <option value="">Todas Restricoes</option>
+                            <option value="none">Normal</option>
+                            <option value="ombro">Ombro</option>
+                            <option value="joelho">Joelho</option>
+                            <option value="lombar">Lombar</option>
+                        </select>
+                        <select id="filter-video" onchange="filterTable()">
+                            <option value="">Todos</option>
+                            <option value="missing">Sem Video</option>
+                            <option value="ok">Com Video</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Dia</th>
+                                <th>Tipo</th>
+                                <th>Restricao</th>
+                                <th>Nome</th>
+                                <th>Video (URL YouTube)</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="database.js"></script>
+    <script>
+        const ADMIN_PASS = 'admin123';
+        var videoEdits = {};
+
+        function checkAdmin() {
+            var pass = document.getElementById('admin-pass').value;
+            if (pass === ADMIN_PASS) {
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('main-panel').style.display = 'block';
+                initAdmin();
+            } else {
+                alert('Senha incorreta.');
+            }
+        }
+
+        function initAdmin() {
+            // Load saved videos from localStorage
+            var saved = localStorage.getItem('admin_videos');
+            if (saved) {
+                videoEdits = JSON.parse(saved);
+                // Apply saved URLs to exerciseDB
+                window.exerciseDB.forEach(function (ex) {
+                    if (videoEdits[ex.id]) ex.video_url = videoEdits[ex.id];
+                });
+            }
+
+            // Populate day filter
+            var daySelect = document.getElementById('filter-day');
+            for (var d = 1; d <= 21; d++) {
+                var opt = document.createElement('option');
+                opt.value = d;
+                opt.text = 'Dia ' + d;
+                daySelect.appendChild(opt);
+            }
+
+            renderTable(window.exerciseDB);
+            updateStats();
+        }
+
+        function renderTable(data) {
+            var tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            document.getElementById('count').innerText = data.length;
+
+            data.forEach(function (ex) {
+                var tr = document.createElement('tr');
+                var restrictLabel = { none: 'Normal', ombro: 'Ombro', joelho: 'Joelho', lombar: 'Lombar' };
+                var hasVideo = ex.video_url && ex.video_url.length > 5;
+                tr.innerHTML =
+                    '<td><b>' + ex.day + '</b></td>' +
+                    '<td>' + ex.type.toUpperCase() + '</td>' +
+                    '<td>' + (restrictLabel[ex.avoid] || ex.avoid) + '</td>' +
+                    '<td style="max-width:220px;">' + ex.name + '</td>' +
+                    '<td><input class="vid-input" data-id="' + ex.id + '" value="' + (ex.video_url || '') + '" placeholder="https://youtube.com/watch?v=..." oninput="onVideoEdit(this)"></td>' +
+                    '<td><span class="tag ' + (hasVideo ? 'ok' : 'missing') + '">' + (hasVideo ? 'OK' : 'FALTANDO') + '</span></td>';
+                tbody.appendChild(tr);
+            });
+        }
+
+        function onVideoEdit(input) {
+            var id = input.getAttribute('data-id');
+            var val = input.value.trim();
+            videoEdits[id] = val;
+            // Update status tag in same row
+            var tag = input.closest('tr').querySelector('.tag');
+            var hasVideo = val.length > 5;
+            tag.className = 'tag ' + (hasVideo ? 'ok' : 'missing');
+            tag.innerText = hasVideo ? 'OK' : 'FALTANDO';
+        }
+
+        function saveAllVideos() {
+            // Apply all edits to exerciseDB
+            window.exerciseDB.forEach(function (ex) {
+                if (videoEdits[ex.id] !== undefined) ex.video_url = videoEdits[ex.id];
+            });
+            localStorage.setItem('admin_videos', JSON.stringify(videoEdits));
+            updateStats();
+            alert('Videos salvos! Clique em "Exportar database.js" para baixar o arquivo atualizado.');
+        }
+
+        function updateStats() {
+            var total = window.exerciseDB.length;
+            var withVideo = window.exerciseDB.filter(function (e) { return e.video_url && e.video_url.length > 5; }).length;
+            var missing = total - withVideo;
+            var pct = total > 0 ? Math.round((withVideo / total) * 100) : 0;
+            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-videos').innerText = withVideo;
+            document.getElementById('stat-missing').innerText = missing;
+            document.getElementById('stat-pct').innerText = pct + '%';
+        }
+
+        function filterTable() {
+            var search = document.getElementById('search').value.toLowerCase();
+            var day = document.getElementById('filter-day').value;
+            var type = document.getElementById('filter-type').value;
+            var avoid = document.getElementById('filter-avoid').value;
+            var video = document.getElementById('filter-video').value;
+
+            var filtered = window.exerciseDB.filter(function (ex) {
+                if (search && !ex.name.toLowerCase().includes(search)) return false;
+                if (day && ex.day != day) return false;
+                if (type && ex.type !== type) return false;
+                if (avoid && ex.avoid !== avoid) return false;
+                var hasVideo = ex.video_url && ex.video_url.length > 5;
+                if (video === 'missing' && hasVideo) return false;
+                if (video === 'ok' && !hasVideo) return false;
+                return true;
+            });
+            renderTable(filtered);
+        }
+
+        function exportDB() {
+            // Apply all edits
+            window.exerciseDB.forEach(function (ex) {
+                if (videoEdits[ex.id] !== undefined) ex.video_url = videoEdits[ex.id];
+            });
+
+            var lines = ['// BANCO DE DADOS ATUALIZADO - Calistenia Pro'];
+            lines.push('// Gerado pelo Painel Admin em ' + new Date().toLocaleString());
+            lines.push('');
+            lines.push('window.exerciseDB = ' + JSON.stringify(window.exerciseDB, null, 2) + ';');
+            lines.push('');
+            lines.push('function getWorkoutForDay(day, restriction) {');
+            lines.push('    var tipos = ["push", "legs", "core", "cardio"];');
+            lines.push('    return tipos.map(function(tipo) {');
+            lines.push('        var specific = null, normal = null;');
+            lines.push('        for (var i = 0; i < window.exerciseDB.length; i++) {');
+            lines.push('            var e = window.exerciseDB[i];');
+            lines.push('            if (e.day === day && e.type === tipo) {');
+            lines.push('                if (e.avoid === restriction) specific = e;');
+            lines.push('                if (e.avoid === "none") normal = e;');
+            lines.push('            }');
+            lines.push('        }');
+            lines.push('        return specific || normal;');
+            lines.push('    });');
+            lines.push('}');
+
+            var content = lines.join('\n');
+
+            // Show in box
+            var box = document.getElementById('export-box');
+            box.innerText = content;
+            box.style.display = 'block';
+
+            // Download
+            var blob = new Blob([content], { type: 'text/javascript' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'database.js';
+            a.click();
+            URL.revokeObjectURL(url);
+
+            alert('Arquivo database.js baixado! Agora suba ele no GitHub para atualizar o site.');
+        }
+    </script>
+</body>
+
+</html>
