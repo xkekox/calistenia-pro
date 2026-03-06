@@ -1,48 +1,155 @@
-// BANCO DE DADOS DE EXERCÍCIOS - CALISTENIA PRO 21 DIAS
-// Estrutura: Nome, Descrição, Tipo, Tags de Perigo (quem NÃO pode fazer), Video (YouTube URL)
+// ============================================================
+// BANCO DE DADOS - CALISTENIA PRO 21 DIAS
+// Auto-gerado: 21 dias x 4 tipos x variações por restrição
+// Total: ~210 exercícios adaptados
+// ============================================================
+// avoid: 'none'   = exercício normal (sem restrição)
+// avoid: 'ombro'  = versão adaptada para ombros
+// avoid: 'joelho' = versão adaptada para joelhos
+// avoid: 'lombar' = versão adaptada para lombar
+// ============================================================
 
-const exerciseDB = [
-    // --- DIA 1 ---
-    { id: 'd1_1', day: 1, type: 'push', name: "Flexão de Braço (Push-up)", desc: "3 séries de 12 repetições. Mãos na largura dos ombros.", avoid: ['ombro'], video_url: "https://www.youtube.com/watch?v=IODxDxX7oi4" },
-    { id: 'd1_1_safe', day: 1, type: 'push', name: "Flexão na Parede (Wall Push-up)", desc: "3 séries de 15 repetições. Alternativa segura para proteger articulações.", avoid: [], video_url: "https://www.youtube.com/watch?v=a6YHbMCHp40" },
+(function () {
+    const tipos = ['push', 'legs', 'core', 'cardio'];
 
-    { id: 'd1_2', day: 1, type: 'legs', name: "Agachamento Livre (Squat)", desc: "3 séries de 20 repetições. Desça com o peso nos calcanhares.", avoid: ['joelho'], video_url: "https://www.youtube.com/watch?v=aclHkVaku9U" },
-    { id: 'd1_2_safe', day: 1, type: 'legs', name: "Agachamento Isométrico (Wall Sit)", desc: "3 séries de 30 segundos. Encoste na parede e segure.", avoid: [], video_url: "https://www.youtube.com/watch?v=y-wV4Venusw" },
+    const nomesBase = {
+        push: ['Flexao de Braco', 'Mergulho em Cadeira', 'Flexao Diamante', 'Pike Pushup'],
+        legs: ['Agachamento Livre', 'Afundo Frontal', 'Agachamento Sumo', 'Elevacao de Panturrilha'],
+        core: ['Prancha Frontal', 'Abdominal Supra', 'Elevacao de Pernas', 'Russian Twist'],
+        cardio: ['Polichinelo', 'Burpee Completo', 'Mountain Climber', 'Corrida Estacionaria']
+    };
 
-    { id: 'd1_3', day: 1, type: 'core', name: "Prancha Frontal (Plank)", desc: "3 séries de 45 segundos. Mantenha o corpo reto.", avoid: ['lombar'], video_url: "https://www.youtube.com/watch?v=pSHjTRCQxIw" },
-    { id: 'd1_3_safe', day: 1, type: 'core', name: "Prancha Alta (High Plank)", desc: "3 séries de 30 segundos. Braços esticados para menor pressão.", avoid: [], video_url: "https://www.youtube.com/watch?v=unI6AIn93YI" },
+    const nomesAdapt = {
+        ombro: { push: 'Flexao na Parede (Protecao Ombro)', cardio: 'Polichinelo Bracos Baixos (Protecao Ombro)' },
+        joelho: { legs: 'Isometria de Pernas (Protecao Joelho)', cardio: 'Passada Lateral (Protecao Joelho)' },
+        lombar: { core: 'Abdominal com Apoio (Protecao Lombar)', legs: 'Agachamento Parcial (Protecao Lombar)' }
+    };
 
-    { id: 'd1_4', day: 1, type: 'cardio', name: "Polichinelos (Jumping Jacks)", desc: "3 séries de 50 repetições. Mantenha o ritmo constante.", avoid: ['joelho', 'ombro'], video_url: "https://www.youtube.com/watch?v=nGaXj3kkmrU" },
-    { id: 'd1_4_safe', day: 1, type: 'cardio', name: "Passada Lateral com Braços", desc: "3 séries de 20 repetições. Sem impacto nos joelhos.", avoid: [], video_url: "https://www.youtube.com/watch?v=vV77m6N-XyI" },
+    const descNormal = {
+        push: '3 series de 12-15 reps. Maos na largura dos ombros, core contraido.',
+        legs: '3 series de 15-20 reps. Peso nos calcanhares, joelhos alinhados.',
+        core: '3 series de 45 segundos. Coluna neutra, respiracao controlada.',
+        cardio: '3 series de 45 segundos. Mantenha ritmo e postura ereta.'
+    };
 
-    // --- DIA 2 ---
-    { id: 'd2_1', day: 2, type: 'push', name: "Flexão Diamante", desc: "3 séries de 10 repetições. Mãos juntas em formato de diamante.", avoid: ['ombro'], video_url: "https://www.youtube.com/watch?v=IODxDxX7oi4" },
-    { id: 'd2_1_rehab', day: 2, type: 'push', name: "Extensão de Tríceps na Parede", desc: "3 séries de 12 repetições. Foco total no tríceps.", avoid: [], video_url: "https://www.youtube.com/watch?v=a6YHbMCHp40" },
+    const descAdapt = {
+        ombro: {
+            push: 'Variacao sem impacto no ombro — foco no triceps e peitoral.',
+            cardio: 'Movimento com bracos abaixo do ombro — zero stress articular.'
+        },
+        joelho: {
+            legs: 'Isometria controlada — zero impacto na articulacao do joelho.',
+            cardio: 'Sem salto — passadas lentas e controladas para proteger o joelho.'
+        },
+        lombar: {
+            core: 'Coluna totalmente apoiada no chao — sem arqueamento lombar.',
+            legs: 'Amplitude reduzida — controle total para proteger a lombar.'
+        }
+    };
 
-    { id: 'd2_2', day: 2, type: 'legs', name: "Afundo (Lunges)", desc: "3 séries de 12 repetições cada perna.", avoid: ['joelho'], video_url: "https://www.youtube.com/watch?v=QOVaHwm-Q6U" },
-    { id: 'd2_2_safe', day: 2, type: 'legs', name: "Elevação Pélvica (Glute Bridge)", desc: "3 séries de 15 repetições. Foco em glúteos.", avoid: [], video_url: "https://www.youtube.com/watch?v=wPM8icPu6H8" },
+    // IDs de video YouTube. Substitua pelos seus videos reais.
+    const videosNormal = {
+        push: ['IODxDxX7oi4', 'IODxDxX7oi4', 'IODxDxX7oi4', 'IODxDxX7oi4'],
+        legs: ['aclHkVaku9U', 'QOVaHwm-Q6U', 'aclHkVaku9U', 'aclHkVaku9U'],
+        core: ['pSHjTRCQxIw', 'Xyd_fa5zoOG', 'pSHjTRCQxIw', 'pSHjTRCQxIw'],
+        cardio: ['nGaXj3kkmrU', 'dZgVxmf6jkA', 'nmwgirgXLYM', 'nGaXj3kkmrU']
+    };
+    const videosAdapt = {
+        ombro: { push: 'a6YHbMCHp40', cardio: 'vV77m6N-XyI' },
+        joelho: { legs: 'y-wV4Venusw', cardio: 'vV77m6N-XyI' },
+        lombar: { core: 'unI6AIn93YI', legs: 'wPM8icPu6H8' }
+    };
 
-    { id: 'd2_3', day: 2, type: 'core', name: "Mountain Climbers", desc: "3 séries de 30 segundos. Joelhos ao peito.", avoid: ['lombar', 'ombro'], video_url: "https://www.youtube.com/watch?v=nmwgirgXLYM" },
-    { id: 'd2_3_safe', day: 2, type: 'core', name: "Abdominal Supra Curto", desc: "3 séries de 20 repetições. Controle total.", avoid: [], video_url: "https://www.youtube.com/watch?v=Xyd_fa5zoOG" },
+    var db = [];
 
-    { id: 'd2_4', day: 2, type: 'cardio', name: "Burpees", desc: "3 séries de 10 repetições. Movimento explosivo.", avoid: ['joelho', 'ombro', 'lombar'], video_url: "https://www.youtube.com/watch?v=dZgVxmf6jkA" },
-    { id: 'd2_4_safe', day: 2, type: 'cardio', name: "Burpee Adaptado (Sem Salto)", desc: "3 séries de 10 repetições. Sem impacto.", avoid: [], video_url: "https://www.youtube.com/watch?v=7uV8-w05_2Q" },
-];
+    for (var dia = 1; dia <= 21; dia++) {
+        tipos.forEach(function (tipo) {
+            var idx = (dia - 1) % 4;
+            var idBase = 'd' + dia + '_' + tipo;
 
-function getWorkoutForDay(day, restriction) {
-    const types = ['push', 'legs', 'core', 'cardio'];
-    let dailyWorkout = [];
+            // --- EXERCICIO NORMAL ---
+            db.push({
+                id: idBase + '_normal',
+                day: dia,
+                type: tipo,
+                avoid: 'none',
+                name: nomesBase[tipo][idx] + ' - Dia ' + dia,
+                desc: descNormal[tipo],
+                video_url: videosNormal[tipo][idx] ? 'https://www.youtube.com/watch?v=' + videosNormal[tipo][idx] : ''
+            });
 
-    types.forEach(type => {
-        let options = exerciseDB.filter(e => e.type === type && (e.day === (day % 2 === 0 ? 2 : 1)));
-        let safeOption = options.find(e => !e.avoid.includes(restriction));
+            // --- VARIACAO OMBRO ---
+            if (nomesAdapt.ombro[tipo]) {
+                db.push({
+                    id: idBase + '_ombro',
+                    day: dia,
+                    type: tipo,
+                    avoid: 'ombro',
+                    name: nomesAdapt.ombro[tipo] + ' - Dia ' + dia,
+                    desc: descAdapt.ombro[tipo],
+                    video_url: videosAdapt.ombro[tipo] ? 'https://www.youtube.com/watch?v=' + videosAdapt.ombro[tipo] : ''
+                });
+            }
 
-        if (!safeOption) {
-            safeOption = exerciseDB.find(e => e.type === type && (!e.avoid || e.avoid.length === 0));
+            // --- VARIACAO JOELHO ---
+            if (nomesAdapt.joelho[tipo]) {
+                db.push({
+                    id: idBase + '_joelho',
+                    day: dia,
+                    type: tipo,
+                    avoid: 'joelho',
+                    name: nomesAdapt.joelho[tipo] + ' - Dia ' + dia,
+                    desc: descAdapt.joelho[tipo],
+                    video_url: videosAdapt.joelho[tipo] ? 'https://www.youtube.com/watch?v=' + videosAdapt.joelho[tipo] : ''
+                });
+            }
+
+            // --- VARIACAO LOMBAR ---
+            if (nomesAdapt.lombar[tipo]) {
+                db.push({
+                    id: idBase + '_lombar',
+                    day: dia,
+                    type: tipo,
+                    avoid: 'lombar',
+                    name: nomesAdapt.lombar[tipo] + ' - Dia ' + dia,
+                    desc: descAdapt.lombar[tipo],
+                    video_url: videosAdapt.lombar[tipo] ? 'https://www.youtube.com/watch?v=' + videosAdapt.lombar[tipo] : ''
+                });
+            }
+        });
+    }
+
+    window.exerciseDB = db;
+    console.log('[Calistenia Pro] Banco carregado: ' + db.length + ' exercicios.');
+})();
+
+// ============================================================
+// SELECAO DE TREINO POR DIA E RESTRICAO
+// Logica: busca variacao especifica para a restricao.
+// Se nao existir, usa o exercicio normal.
+// ============================================================
+function getWorkoutForDay(day, restrictions) {
+    // Aceita string ou array de restricoes
+    if (!restrictions) restrictions = [];
+    if (!Array.isArray(restrictions)) restrictions = [restrictions];
+
+    var tipos = ['push', 'legs', 'core', 'cardio'];
+    return tipos.map(function (tipo) {
+        var specific = null;
+        var normal = null;
+
+        for (var i = 0; i < window.exerciseDB.length; i++) {
+            var e = window.exerciseDB[i];
+            if (e.day === day && e.type === tipo) {
+                // Busca variacao adaptada para qualquer restricao do usuario
+                if (restrictions.indexOf(e.avoid) >= 0) {
+                    specific = e;
+                }
+                if (e.avoid === 'none') normal = e;
+            }
         }
 
-        dailyWorkout.push(safeOption);
+        // Prioridade: variacao adaptada > normal
+        return specific || normal;
     });
-
-    return dailyWorkout;
 }
