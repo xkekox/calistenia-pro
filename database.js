@@ -1,5 +1,5 @@
 // BANCO DE DADOS ATUALIZADO - Calistenia Pro
-// Gerado pelo Painel Admin em 06/03/2026, 09:21:41
+// Gerado pelo Painel Admin em 06/03/2026, 09:24:00
 
 window.exerciseDB = [
   {
@@ -459,7 +459,7 @@ window.exerciseDB = [
     "avoid": "none",
     "name": "Mergulho em Cadeira - Dia 6",
     "desc": "3 series de 12-15 reps. Maos na largura dos ombros, core contraido.",
-    "video_url": "https://www.youtube.com/shorts/RpbWe0ZirW4"
+    "video_url": "https://www.youtube.com/watch?v=gtOP_C36d2s"
   },
   {
     "id": "d6_push_ombro",
