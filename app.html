@@ -101,7 +101,8 @@
 
         /* INPUTS & BUTTONS */
         input[type=email],
-        input[type=text] {
+        input[type=text],
+        input[type=password] {
             width: 100%;
             padding: 16px;
             background: #1a1a1a;
@@ -155,6 +156,21 @@
             background: var(--accent);
             color: #000;
             box-shadow: 0 8px 24px rgba(0, 255, 136, 0.2);
+        }
+
+        .auth-note {
+            color: #888;
+            font-size: 0.9rem;
+            line-height: 1.55;
+            margin-bottom: 16px;
+        }
+
+        .auth-status {
+            min-height: 20px;
+            margin-top: 12px;
+            color: #999;
+            font-size: 0.82rem;
+            line-height: 1.45;
         }
 
         /* ASSESSMENT — checkboxes */
@@ -447,6 +463,8 @@
             margin-bottom: 8px;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js?v=1"></script>
 </head>
 
 <body>
@@ -456,9 +474,13 @@
         <div class="top-bar"><span class="logo">CALISTENIA PRO</span></div>
         <div class="card" style="margin-top: 40px;">
             <p class="card-title">Acesso ao Desafio</p>
-            <p style="color:#888; font-size:0.9rem; margin-bottom:16px;">Digite o e-mail usado na sua compra:</p>
+            <p class="auth-note">Use o mesmo e-mail da compra. No primeiro acesso, crie sua senha. Depois, entre sempre com e-mail e senha.</p>
             <input type="email" id="email" placeholder="seuemail@gmail.com">
+            <input type="password" id="password" placeholder="Sua senha de acesso">
             <button class="btn" onclick="login()">ENTRAR AGORA</button>
+            <button class="btn secondary" onclick="registerAccount()">CRIAR ACESSO</button>
+            <button class="btn secondary" onclick="sendResetPassword()">RECUPERAR SENHA</button>
+            <div id="auth-status" class="auth-status"></div>
         </div>
     </div>
 
@@ -510,6 +532,7 @@
         <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
             <button class="btn secondary" style="margin-top:0; flex:1;" onclick="resetProgress()">RESETAR TESTE</button>
             <button class="btn secondary" style="margin-top:0; flex:1;" onclick="unlockTodayForTest()">LIBERAR DIA</button>
+            <button class="btn secondary" style="margin-top:0; flex:1;" onclick="logout()">SAIR</button>
         </div>
 
         <div class="days-grid" id="days-grid"></div>
@@ -586,22 +609,38 @@
         // ======================================================
         const TEST_MODE = new URLSearchParams(window.location.search).get('test') === '1';
         const TEST_EMAIL = 'teste@calistenia.pro';
+        const STORAGE_PREFIX = 'calpro_';
 
         var u = {
+            userId: '',
             email: '',
-            day: 1,               // dia atual no desafio
-            restrictions: [],     // array: ['ombro','joelho','lombar']
-            completedDays: {},    // {1: '06/03/2026', 2: '07/03/2026', ...}
+            day: 1,
+            restrictions: [],
+            completedDays: {},
             lastCompletedDate: null,
             assessmentDone: false
         };
 
         var tempRestrictions = [];
+        var supabaseClient = null;
+        var cloudEnabled = false;
 
         // ======================================================
         // UTILITARIOS
         // ======================================================
         function today() { return new Date().toLocaleDateString('pt-BR'); }
+
+        function blankUser(email, userId) {
+            return {
+                userId: userId || '',
+                email: email || '',
+                day: 1,
+                restrictions: [],
+                completedDays: {},
+                lastCompletedDate: null,
+                assessmentDone: false
+            };
+        }
 
         function showScreen(id) {
             const screen = document.getElementById(id);
@@ -613,26 +652,155 @@
             screen.classList.add('active');
         }
 
-        function save() {
+        function setAuthStatus(message, isError) {
+            var box = document.getElementById('auth-status');
+            if (!box) return;
+            box.innerText = message || '';
+            box.style.color = isError ? '#ff8a50' : '#999';
+        }
+
+        function getSupabaseConfig() {
+            return {
+                url: (window.CALPRO_SUPABASE_URL || '').trim(),
+                anonKey: (window.CALPRO_SUPABASE_ANON_KEY || '').trim(),
+                redirectUrl: (window.CALPRO_SUPABASE_REDIRECT_URL || (window.location.origin + window.location.pathname)).trim()
+            };
+        }
+
+        function hasValidSupabaseConfig() {
+            var cfg = getSupabaseConfig();
+            return !!cfg.url && !!cfg.anonKey && cfg.url.indexOf('YOUR_PROJECT') === -1 && cfg.anonKey.indexOf('YOUR_') === -1;
+        }
+
+        async function initSupabase() {
+            if (TEST_MODE) return false;
+            if (!window.supabase || !window.supabase.createClient || !hasValidSupabaseConfig()) {
+                setAuthStatus('Modo local ativo. Configure o Supabase para liberar e-mail e senha reais.', false);
+                return false;
+            }
+
+            if (!supabaseClient) {
+                var cfg = getSupabaseConfig();
+                supabaseClient = window.supabase.createClient(cfg.url, cfg.anonKey, {
+                    auth: {
+                        persistSession: true,
+                        autoRefreshToken: true,
+                        detectSessionInUrl: true
+                    }
+                });
+                cloudEnabled = true;
+                supabaseClient.auth.onAuthStateChange(function (event, session) {
+                    if (event === 'SIGNED_OUT' && !TEST_MODE) {
+                        u = blankUser('', '');
+                        showScreen('screen-login');
+                    }
+                    if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session && session.user && !TEST_MODE) {
+                        hydrateAuthenticatedUser(session.user).catch(function (e) {
+                            console.error('[AIOS:DEV] Erro ao hidratar sessao do Supabase:', e);
+                        });
+                    }
+                });
+            }
+
+            return true;
+        }
+
+        function saveLocal() {
             try {
-                localStorage.setItem('calpro_' + u.email, JSON.stringify(u));
+                if (!u.email) return;
+                localStorage.setItem(STORAGE_PREFIX + u.email, JSON.stringify(u));
             } catch (e) {
                 console.error('[AIOS:DEV] Falha ao salvar no localStorage:', e);
             }
         }
 
-        function load(email) {
+        async function saveCloud() {
+            if (!cloudEnabled || !supabaseClient || !u.email || !u.userId) return;
+            var response = await supabaseClient.from('calpro_user_state').upsert({
+                user_id: u.userId,
+                email: u.email,
+                day: u.day,
+                restrictions: u.restrictions || [],
+                completed_days: u.completedDays || {},
+                last_completed_date: u.lastCompletedDate || null,
+                assessment_done: !!u.assessmentDone
+            });
+            if (response.error) throw response.error;
+        }
+
+        function save() {
+            saveLocal();
+            saveCloud().catch(function (e) {
+                console.error('[AIOS:DEV] Falha ao salvar no Supabase:', e);
+            });
+        }
+
+        function loadLocal(email) {
             try {
-                var saved = localStorage.getItem('calpro_' + email);
+                var saved = localStorage.getItem(STORAGE_PREFIX + email);
                 if (saved) {
                     u = JSON.parse(saved);
                     return true;
                 }
             } catch (e) {
                 console.error('[AIOS:DEV] Erro ao carregar dados do usuario (JSON corrompido). Resetando...', e);
-                localStorage.removeItem('calpro_' + email);
+                localStorage.removeItem(STORAGE_PREFIX + email);
             }
             return false;
+        }
+
+        async function loadCloud(authUser) {
+            if (!cloudEnabled || !supabaseClient || !authUser) return false;
+            var response = await supabaseClient
+                .from('calpro_user_state')
+                .select('*')
+                .eq('user_id', authUser.id)
+                .maybeSingle();
+
+            if (response.error) throw response.error;
+            if (!response.data) return false;
+
+            u = {
+                userId: authUser.id,
+                email: response.data.email || authUser.email || '',
+                day: response.data.day || 1,
+                restrictions: response.data.restrictions || [],
+                completedDays: response.data.completed_days || {},
+                lastCompletedDate: response.data.last_completed_date || null,
+                assessmentDone: !!response.data.assessment_done
+            };
+            saveLocal();
+            return true;
+        }
+
+        async function hydrateAuthenticatedUser(authUser) {
+            if (!authUser) return;
+
+            var loadedRemote = false;
+            try {
+                loadedRemote = await loadCloud(authUser);
+            } catch (e) {
+                console.error('[AIOS:DEV] Falha ao carregar progresso do Supabase:', e);
+            }
+
+            if (!loadedRemote) {
+                if (!loadLocal(authUser.email || '')) {
+                    u = blankUser(authUser.email || '', authUser.id);
+                }
+                u.userId = authUser.id;
+                u.email = authUser.email || u.email;
+                save();
+            } else {
+                u.userId = authUser.id;
+                u.email = authUser.email || u.email;
+            }
+
+            setAuthStatus('');
+            if (u.assessmentDone) {
+                openDashboard();
+            } else {
+                showScreen('screen-assessment');
+            }
         }
 
         function applyAdminVideoDrafts() {
@@ -652,15 +820,8 @@
             if (!TEST_MODE) return;
             document.getElementById('screen-login').style.display = 'none';
             u.email = TEST_EMAIL;
-            if (!load(TEST_EMAIL)) {
-                u = {
-                    email: TEST_EMAIL,
-                    day: 1,
-                    restrictions: [],
-                    completedDays: {},
-                    lastCompletedDate: null,
-                    assessmentDone: false
-                };
+            if (!loadLocal(TEST_EMAIL)) {
+                u = blankUser(TEST_EMAIL, 'test-user');
             }
             if (u.assessmentDone) {
                 openDashboard();
@@ -672,9 +833,10 @@
         // ======================================================
         // LOGIN
         // ======================================================
-        function login() {
+        async function login() {
             console.log('[AIOS:DEV] Iniciando processo de login...');
             var emailInput = document.getElementById('email');
+            var passwordInput = document.getElementById('password');
             if (!emailInput) {
                 alert('Erro critico: Campo de email nao encontrado.');
                 return;
@@ -682,14 +844,36 @@
 
             var e = emailInput.value.trim();
             if (e.length < 5 || e.indexOf('@') < 0) {
-                alert('Por favor, digite um e-mail valido.');
+                setAuthStatus('Por favor, digite um e-mail valido.', true);
                 return;
             }
 
             u.email = e;
             console.log('[AIOS:DEV] Email validado:', e);
 
-            if (load(e)) {
+            if (cloudEnabled) {
+                var password = passwordInput ? passwordInput.value.trim() : '';
+                if (password.length < 6) {
+                    setAuthStatus('Digite sua senha para entrar.', true);
+                    return;
+                }
+
+                setAuthStatus('Entrando na sua conta...', false);
+                var signInResponse = await supabaseClient.auth.signInWithPassword({
+                    email: e,
+                    password: password
+                });
+
+                if (signInResponse.error) {
+                    setAuthStatus(signInResponse.error.message, true);
+                    return;
+                }
+
+                await hydrateAuthenticatedUser(signInResponse.data.user);
+                return;
+            }
+
+            if (loadLocal(e)) {
                 console.log('[AIOS:DEV] Usuario carregado com sucesso.');
                 if (u.assessmentDone) {
                     openDashboard();
@@ -698,11 +882,86 @@
                 }
             } else {
                 console.log('[AIOS:DEV] Novo usuario detectado ou erro no load. Iniciando avaliacao.');
-                u.email = e;
-                u.assessmentDone = false;
-                u.completedDays = {};
+                u = blankUser(e, '');
                 showScreen('screen-assessment');
             }
+        }
+
+        async function registerAccount() {
+            if (!cloudEnabled) {
+                setAuthStatus('Configure o Supabase para criar contas reais com senha.', true);
+                return;
+            }
+
+            var email = document.getElementById('email').value.trim();
+            var password = document.getElementById('password').value.trim();
+            if (email.length < 5 || email.indexOf('@') < 0) {
+                setAuthStatus('Digite um e-mail valido para criar o acesso.', true);
+                return;
+            }
+            if (password.length < 6) {
+                setAuthStatus('A senha precisa ter pelo menos 6 caracteres.', true);
+                return;
+            }
+
+            setAuthStatus('Criando seu acesso...', false);
+            var cfg = getSupabaseConfig();
+            var response = await supabaseClient.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    emailRedirectTo: cfg.redirectUrl,
+                    data: { product: 'calistenia-pro' }
+                }
+            });
+
+            if (response.error) {
+                setAuthStatus(response.error.message, true);
+                return;
+            }
+
+            if (response.data.user && response.data.session) {
+                await hydrateAuthenticatedUser(response.data.user);
+                return;
+            }
+
+            setAuthStatus('Conta criada. Verifique seu e-mail para confirmar o acesso antes de entrar.', false);
+        }
+
+        async function sendResetPassword() {
+            if (!cloudEnabled) {
+                setAuthStatus('Configure o Supabase para usar recuperacao de senha.', true);
+                return;
+            }
+
+            var email = document.getElementById('email').value.trim();
+            if (email.length < 5 || email.indexOf('@') < 0) {
+                setAuthStatus('Digite seu e-mail para receber a recuperacao de senha.', true);
+                return;
+            }
+
+            setAuthStatus('Enviando recuperacao de senha...', false);
+            var cfg = getSupabaseConfig();
+            var response = await supabaseClient.auth.resetPasswordForEmail(email, {
+                redirectTo: cfg.redirectUrl
+            });
+
+            if (response.error) {
+                setAuthStatus(response.error.message, true);
+                return;
+            }
+
+            setAuthStatus('Email de recuperacao enviado. Verifique sua caixa de entrada.', false);
+        }
+
+        async function logout() {
+            if (cloudEnabled && supabaseClient) {
+                await supabaseClient.auth.signOut();
+            }
+            u = blankUser('', '');
+            tempRestrictions = [];
+            showScreen('screen-login');
+            setAuthStatus('Voce saiu da sua conta.', false);
         }
 
         // ======================================================
@@ -978,8 +1237,22 @@
             openDashboard();
         }
 
-        window.addEventListener('DOMContentLoaded', function () {
-            bootstrapTestMode();
+        window.addEventListener('DOMContentLoaded', async function () {
+            if (TEST_MODE) {
+                bootstrapTestMode();
+                return;
+            }
+
+            await initSupabase();
+            if (cloudEnabled && supabaseClient) {
+                var sessionResponse = await supabaseClient.auth.getSession();
+                if (sessionResponse.data && sessionResponse.data.session && sessionResponse.data.session.user) {
+                    await hydrateAuthenticatedUser(sessionResponse.data.session.user);
+                    return;
+                }
+            }
+
+            showScreen('screen-login');
         });
 
         function startTimer() {
