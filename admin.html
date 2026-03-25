@@ -228,13 +228,18 @@
 <body>
     <div class="container">
 
-        <!-- MODO TESTE -->
-        <div id="login-section" class="card" style="display:none;">
+        <!-- LOGIN ADMIN -->
+        <div id="login-section" class="card" style="display:block;">
             <h1>ADMIN | Calistenia Pro</h1>
+            <p style="color:#888; margin-bottom:16px; font-size:0.9rem;">Entre com seu e-mail e senha do Supabase para editar os vídeos do app.</p>
+            <input type="email" id="admin-email" placeholder="seuemail@gmail.com">
+            <input type="password" id="admin-pass" placeholder="Sua senha">
+            <button onclick="checkAdmin()">ENTRAR NO ADMIN</button>
+            <p id="admin-status" style="margin-top:14px; color:#999; font-size:0.82rem;"></p>
         </div>
 
         <!-- PAINEL PRINCIPAL -->
-        <div id="main-panel" style="display:block;">
+        <div id="main-panel" style="display:none;">
 
             <div class="card">
                 <h1>PAINEL DE CONTROLE</h1>
@@ -315,53 +320,150 @@
 
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js?v=1"></script>
     <script src="database.js"></script>
     <script>
-        const ADMIN_PASS = 'admin123';
         const TEST_MODE = new URLSearchParams(window.location.search).get('test') === '1';
         var videoEdits = {};
+        var supabaseClient = null;
+        var cloudReady = false;
 
-        function checkAdmin() {
+        function setAdminStatus(message, isError) {
+            var box = document.getElementById('admin-status');
+            if (!box) return;
+            box.innerText = message || '';
+            box.style.color = isError ? '#ff8a50' : '#999';
+        }
+
+        function hasValidSupabaseConfig() {
+            return !!window.CALPRO_SUPABASE_URL &&
+                !!window.CALPRO_SUPABASE_ANON_KEY &&
+                window.CALPRO_SUPABASE_URL.indexOf('YOUR_PROJECT') === -1 &&
+                window.CALPRO_SUPABASE_ANON_KEY.indexOf('YOUR_') === -1;
+        }
+
+        async function initSupabase() {
+            if (!window.supabase || !window.supabase.createClient || !hasValidSupabaseConfig()) {
+                setAdminStatus('Configure o Supabase para liberar o admin.', true);
+                return false;
+            }
+            if (!supabaseClient) {
+                supabaseClient = window.supabase.createClient(window.CALPRO_SUPABASE_URL, window.CALPRO_SUPABASE_ANON_KEY, {
+                    auth: {
+                        persistSession: true,
+                        autoRefreshToken: true,
+                        detectSessionInUrl: true
+                    }
+                });
+                cloudReady = true;
+            }
+            return true;
+        }
+
+        async function checkAdmin() {
+            await initSupabase();
+            if (!cloudReady) return;
+
             if (TEST_MODE) {
                 document.getElementById('login-section').style.display = 'none';
                 document.getElementById('main-panel').style.display = 'block';
-                initAdmin();
+                await initAdmin();
                 return;
             }
-            var pass = document.getElementById('admin-pass').value;
-            if (pass === ADMIN_PASS) {
+
+            var email = document.getElementById('admin-email').value.trim();
+            var pass = document.getElementById('admin-pass').value.trim();
+            if (!email || !pass) {
+                setAdminStatus('Digite e-mail e senha para entrar.', true);
+                return;
+            }
+
+            setAdminStatus('Entrando no admin...', false);
+            var response = await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: pass
+            });
+
+            if (response.error) {
+                setAdminStatus(response.error.message, true);
+                return;
+            }
+
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('main-panel').style.display = 'block';
+            await initAdmin();
+        }
+
+        async function logoutAdmin() {
+            if (supabaseClient) {
+                await supabaseClient.auth.signOut();
+            }
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('main-panel').style.display = 'none';
+            setAdminStatus('Voce saiu do admin.', false);
+        }
+
+        async function bootstrapSession() {
+            await initSupabase();
+            if (!cloudReady) return;
+
+            if (TEST_MODE) {
                 document.getElementById('login-section').style.display = 'none';
                 document.getElementById('main-panel').style.display = 'block';
-                initAdmin();
-            } else {
-                alert('Senha incorreta.');
+                await initAdmin();
+                return;
+            }
+
+            var sessionResponse = await supabaseClient.auth.getSession();
+            if (sessionResponse.data && sessionResponse.data.session && sessionResponse.data.session.user) {
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('main-panel').style.display = 'block';
+                await initAdmin();
             }
         }
 
-        if (TEST_MODE) {
-            window.addEventListener('DOMContentLoaded', function () {
-                checkAdmin();
+        async function loadSupabaseOverrides() {
+            if (!cloudReady) return;
+            var response = await supabaseClient
+                .from('calpro_exercise_videos')
+                .select('exercise_id, video_url');
+            if (response.error) throw response.error;
+            (response.data || []).forEach(function (row) {
+                videoEdits[row.exercise_id] = row.video_url;
             });
         }
 
-        function initAdmin() {
-            // Load saved videos from localStorage
+        async function initAdmin() {
             var saved = localStorage.getItem('admin_videos');
             if (saved) {
-                videoEdits = JSON.parse(saved);
-                // Apply saved URLs to exerciseDB
-                window.exerciseDB.forEach(function (ex) {
-                    if (videoEdits[ex.id]) ex.video_url = videoEdits[ex.id];
-                });
+                try {
+                    videoEdits = JSON.parse(saved);
+                } catch (e) {
+                    console.warn('Falha ao ler cache local do admin.', e);
+                }
             }
+
+            try {
+                await loadSupabaseOverrides();
+            } catch (e) {
+                console.error('Falha ao carregar overrides do Supabase.', e);
+                setAdminStatus('Nao foi possivel carregar os videos do Supabase.', true);
+            }
+
+            window.exerciseDB.forEach(function (ex) {
+                if (videoEdits[ex.id]) ex.video_url = videoEdits[ex.id];
+            });
 
             // Populate day filter
             var daySelect = document.getElementById('filter-day');
-            for (var d = 1; d <= 21; d++) {
-                var opt = document.createElement('option');
-                opt.value = d;
-                opt.text = 'Dia ' + d;
-                daySelect.appendChild(opt);
+            if (daySelect.options.length <= 1) {
+                for (var d = 1; d <= 21; d++) {
+                    var opt = document.createElement('option');
+                    opt.value = d;
+                    opt.text = 'Dia ' + d;
+                    daySelect.appendChild(opt);
+                }
             }
 
             renderTable(window.exerciseDB);
@@ -404,14 +506,56 @@
             tag.innerText = hasVideo ? 'OK' : 'FALTANDO';
         }
 
-        function saveAllVideos() {
+        async function saveAllVideos(publishToSupabase) {
             // Apply all edits to exerciseDB
             window.exerciseDB.forEach(function (ex) {
                 if (videoEdits[ex.id] !== undefined) ex.video_url = videoEdits[ex.id];
             });
             localStorage.setItem('admin_videos', JSON.stringify(videoEdits));
+
+            if (publishToSupabase) {
+                if (!cloudReady || !supabaseClient) {
+                    setAdminStatus('Supabase nao esta pronto para publicar.', true);
+                    return;
+                }
+
+                var sessionResponse = await supabaseClient.auth.getSession();
+                var user = sessionResponse.data && sessionResponse.data.session ? sessionResponse.data.session.user : null;
+                if (!user) {
+                    setAdminStatus('Entre no admin antes de publicar no app.', true);
+                    return;
+                }
+
+                var payload = Object.keys(videoEdits)
+                    .filter(function (key) { return !!videoEdits[key]; })
+                    .map(function (key) {
+                        return {
+                            exercise_id: key,
+                            video_url: videoEdits[key],
+                            updated_by: user.id
+                        };
+                    });
+
+                if (!payload.length) {
+                    setAdminStatus('Nenhum link novo para publicar.', true);
+                    return;
+                }
+
+                setAdminStatus('Publicando videos no Supabase...', false);
+                var upsertResponse = await supabaseClient
+                    .from('calpro_exercise_videos')
+                    .upsert(payload);
+
+                if (upsertResponse.error) {
+                    setAdminStatus(upsertResponse.error.message, true);
+                    return;
+                }
+
+                setAdminStatus('Videos publicados no app com sucesso.', false);
+            }
+
             updateStats();
-            alert('Videos salvos! Clique em "Exportar database.js" para baixar o arquivo atualizado.');
+            alert(publishToSupabase ? 'Videos publicados no app com sucesso.' : 'Videos salvos localmente no admin.');
         }
 
         function updateStats() {
@@ -550,6 +694,14 @@
                 alert('Erro na sincronizacao: ' + err.message);
             }
         }
+
+        async function syncToGitHub() {
+            await saveAllVideos(true);
+        }
+
+        window.addEventListener('DOMContentLoaded', function () {
+            bootstrapSession();
+        });
     </script>
 </body>
 
