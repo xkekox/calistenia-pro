@@ -479,6 +479,7 @@
             <input type="password" id="password" placeholder="Sua senha de acesso">
             <button class="btn" onclick="login()">ENTRAR AGORA</button>
             <button class="btn secondary" onclick="registerAccount()">CRIAR ACESSO</button>
+            <button class="btn secondary" onclick="resendSignupConfirmation()">REENVIAR CONFIRMACAO</button>
             <button class="btn secondary" onclick="sendResetPassword()">RECUPERAR SENHA</button>
             <div id="auth-status" class="auth-status"></div>
         </div>
@@ -693,6 +694,12 @@
                     if (event === 'SIGNED_OUT' && !TEST_MODE) {
                         u = blankUser('', '');
                         showScreen('screen-login');
+                    }
+                    if (event === 'PASSWORD_RECOVERY' && session && session.user && !TEST_MODE) {
+                        handlePasswordRecovery(session.user).catch(function (e) {
+                            console.error('[AIOS:DEV] Erro na recuperacao de senha:', e);
+                            setAuthStatus('Nao foi possivel redefinir sua senha.', true);
+                        });
                     }
                     if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session && session.user && !TEST_MODE) {
                         hydrateAuthenticatedUser(session.user).catch(function (e) {
@@ -920,12 +927,47 @@
                 return;
             }
 
+            if (response.data.user && response.data.user.identities && response.data.user.identities.length === 0) {
+                setAuthStatus('Esse e-mail já está cadastrado. Use ENTRAR AGORA ou RECUPERAR SENHA.', true);
+                return;
+            }
+
             if (response.data.user && response.data.session) {
                 await hydrateAuthenticatedUser(response.data.user);
                 return;
             }
 
             setAuthStatus('Conta criada. Verifique seu e-mail para confirmar o acesso antes de entrar.', false);
+        }
+
+        async function resendSignupConfirmation() {
+            if (!cloudEnabled) {
+                setAuthStatus('Configure o Supabase para reenviar confirmacao de e-mail.', true);
+                return;
+            }
+
+            var email = document.getElementById('email').value.trim();
+            if (email.length < 5 || email.indexOf('@') < 0) {
+                setAuthStatus('Digite seu e-mail para reenviar a confirmacao.', true);
+                return;
+            }
+
+            setAuthStatus('Reenviando confirmacao...', false);
+            var cfg = getSupabaseConfig();
+            var response = await supabaseClient.auth.resend({
+                type: 'signup',
+                email: email,
+                options: {
+                    emailRedirectTo: cfg.redirectUrl
+                }
+            });
+
+            if (response.error) {
+                setAuthStatus(response.error.message, true);
+                return;
+            }
+
+            setAuthStatus('Confirmacao reenviada. Verifique seu e-mail.', false);
         }
 
         async function sendResetPassword() {
@@ -952,6 +994,32 @@
             }
 
             setAuthStatus('Email de recuperacao enviado. Verifique sua caixa de entrada.', false);
+        }
+
+        async function handlePasswordRecovery(authUser) {
+            var newPassword = window.prompt('Digite sua nova senha (minimo 6 caracteres):');
+            if (!newPassword || newPassword.trim().length < 6) {
+                setAuthStatus('A nova senha precisa ter pelo menos 6 caracteres.', true);
+                return;
+            }
+
+            var confirmPassword = window.prompt('Confirme sua nova senha:');
+            if (newPassword !== confirmPassword) {
+                setAuthStatus('As senhas nao coincidem.', true);
+                return;
+            }
+
+            var updateResponse = await supabaseClient.auth.updateUser({
+                password: newPassword.trim()
+            });
+
+            if (updateResponse.error) {
+                setAuthStatus(updateResponse.error.message, true);
+                return;
+            }
+
+            setAuthStatus('Senha atualizada com sucesso. Entre novamente se necessario.', false);
+            await hydrateAuthenticatedUser(authUser);
         }
 
         async function logout() {
