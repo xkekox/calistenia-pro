@@ -19,6 +19,25 @@
         .f-card { background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid #222; }
         .f-card h3 { color: var(--primary); margin-bottom: 15px; font-family: 'Orbitron', sans-serif; }
     </style>
+
+    <!-- Meta Pixel Code -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '914823934782431');
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=914823934782431&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+
 </head>
 <body>
     <section class="hero">
@@ -36,5 +55,8 @@
     <footer style="text-align:center; padding:50px; color:#333; font-size:0.8rem; border-top:1px solid #111;">
         &copy; 2026 CALISTENIA PRO ELITE. <a href="app.html" style="color:#555;">ÁREA DO ALUNO</a>
     </footer>
+    <script>
+        fbq('track', 'ViewContent', { content_name: 'Landing Calistenia Pro' });
+    </script>
 </body>
 </html>

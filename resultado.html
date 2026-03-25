@@ -164,6 +164,25 @@
             font-size: 0.88rem;
         }
     </style>
+
+    <!-- Meta Pixel Code -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '914823934782431');
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=914823934782431&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+
 </head>
 <body>
     <main class="wrap">
@@ -224,6 +243,8 @@
             ? 'Sua avaliação mostra que o produto precisa respeitar dores e limitações já no início. Por isso, o sistema vai priorizar versões mais seguras dos exercícios e adaptar os dias em que houver risco de sobrecarga.'
             : 'Sua avaliação mostra que você pode seguir a progressão principal do desafio. Ainda assim, o sistema mantém a lógica de progressão por dias para evitar excesso e ajudar na constância.';
 
+        fbq('track', 'ViewContent', { content_name: 'Resultado Calistenia Pro' });
+
         document.getElementById('headline').innerText = headline;
         document.getElementById('lead').innerText = lead;
         document.getElementById('plan-title').innerText = hasPain ? 'Versão adaptada do desafio 21 dias' : 'Versão padrão do desafio 21 dias';
@@ -242,6 +263,13 @@
             chip.className = 'chip';
             chip.innerText = 'Sem limitações físicas informadas';
             chips.appendChild(chip);
+        }
+
+        var checkoutBtn = document.getElementById('checkout-btn');
+        if (checkoutBtn) {
+            checkoutBtn.addEventListener('click', function () {
+                fbq('track', 'InitiateCheckout', { value: 29.90, currency: 'BRL' });
+            });
         }
 
         var chipLevel = document.createElement('div');
