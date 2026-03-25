@@ -507,6 +507,11 @@
             </div>
         </div>
 
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+            <button class="btn secondary" style="margin-top:0; flex:1;" onclick="resetProgress()">RESETAR TESTE</button>
+            <button class="btn secondary" style="margin-top:0; flex:1;" onclick="unlockTodayForTest()">LIBERAR DIA</button>
+        </div>
+
         <div class="days-grid" id="days-grid"></div>
     </div>
 
@@ -548,6 +553,8 @@
             <div class="timer-big" id="timer">00:00:00</div>
             <p style="color:#555; font-size:0.75rem; margin-bottom:20px;">Novo treino libera a meia-noite</p>
             <button class="btn secondary" onclick="showScreen('screen-dashboard')">&#8592; VER TODOS OS DIAS</button>
+            <button class="btn secondary" onclick="unlockTodayForTest()">REPETIR TESTE AGORA</button>
+            <button class="btn secondary" onclick="resetProgress()">RESETAR TESTE</button>
         </div>
     </div>
 
@@ -577,6 +584,9 @@
         // ======================================================
         // ESTADO DO USUARIO
         // ======================================================
+        const TEST_MODE = new URLSearchParams(window.location.search).get('test') === '1';
+        const TEST_EMAIL = 'teste@calistenia.pro';
+
         var u = {
             email: '',
             day: 1,               // dia atual no desafio
@@ -623,6 +633,40 @@
                 localStorage.removeItem('calpro_' + email);
             }
             return false;
+        }
+
+        function applyAdminVideoDrafts() {
+            try {
+                var saved = localStorage.getItem('admin_videos');
+                if (!saved || !window.exerciseDB || !Array.isArray(window.exerciseDB)) return;
+                var drafts = JSON.parse(saved);
+                window.exerciseDB.forEach(function (ex) {
+                    if (drafts[ex.id] !== undefined) ex.video_url = drafts[ex.id];
+                });
+            } catch (e) {
+                console.warn('[AIOS:DEV] Falha ao aplicar rascunhos de video do admin.', e);
+            }
+        }
+
+        function bootstrapTestMode() {
+            if (!TEST_MODE) return;
+            document.getElementById('screen-login').style.display = 'none';
+            u.email = TEST_EMAIL;
+            if (!load(TEST_EMAIL)) {
+                u = {
+                    email: TEST_EMAIL,
+                    day: 1,
+                    restrictions: [],
+                    completedDays: {},
+                    lastCompletedDate: null,
+                    assessmentDone: false
+                };
+            }
+            if (u.assessmentDone) {
+                openDashboard();
+            } else {
+                showScreen('screen-assessment');
+            }
         }
 
         // ======================================================
@@ -727,7 +771,7 @@
             var grid = document.getElementById('days-grid');
             grid.innerHTML = '';
             var todayStr = today();
-            var alreadyDoneToday = u.lastCompletedDate === todayStr;
+            var alreadyDoneToday = !TEST_MODE && u.lastCompletedDate === todayStr;
 
             for (var d = 1; d <= 21; d++) {
                 var cell = document.createElement('div');
@@ -775,6 +819,7 @@
         var restInterval = null;
 
         function openWorkout(day) {
+            applyAdminVideoDrafts();
             currentDay = day;
             currentExercises = getWorkoutForDay(day, u.restrictions).filter(function (e) { return !!e; });
             currentExIndex = 0;
@@ -803,8 +848,9 @@
                 if (vidData.type === 'youtube') {
                     videoHtml += '<iframe src="https://www.youtube.com/embed/' + vidData.id + '" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>';
                 } else if (vidData.type === 'tiktok') {
-                    // Player V1 oficial do TikTok com suporte a metadados e escala mobile
-                    videoHtml += '<iframe src="https://www.tiktok.com/player/v1/' + vidData.id + '?music_info=1&description=1" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>';
+                    // Fallback local: abre no TikTok se o player embutido falhar
+                    videoHtml += '<iframe src="https://www.tiktok.com/player/v1/' + vidData.id + '?music_info=1&description=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>' +
+                        '<div style="margin-top:8px;"><a href="' + ex.video_url + '" target="_blank" rel="noopener" style="color:var(--accent); font-weight:700; text-decoration:none;">ABRIR VIDEO NO TIKTOK</a></div></div>';
                 }
             }
             var html = '<div class="ex-card">' +
@@ -904,13 +950,37 @@
             if (restInterval) clearInterval(restInterval);
             var todayStr = today();
             u.completedDays[currentDay] = todayStr;
-            u.lastCompletedDate = todayStr;
+            u.lastCompletedDate = TEST_MODE ? null : todayStr;
             u.day = currentDay + 1;
             if (u.day > 21) u.day = 21;
             save();
             showScreen('screen-lock');
             startTimer();
         }
+
+        function resetProgress() {
+            u.day = 1;
+            u.completedDays = {};
+            u.lastCompletedDate = null;
+            u.assessmentDone = false;
+            tempRestrictions = [];
+            save();
+            showScreen('screen-assessment');
+        }
+
+        function unlockTodayForTest() {
+            if (u.day > 1) {
+                delete u.completedDays[u.day - 1];
+                u.day = u.day - 1;
+            }
+            u.lastCompletedDate = null;
+            save();
+            openDashboard();
+        }
+
+        window.addEventListener('DOMContentLoaded', function () {
+            bootstrapTestMode();
+        });
 
         function startTimer() {
             function tick() {

@@ -228,20 +228,17 @@
 <body>
     <div class="container">
 
-        <!-- LOGIN -->
-        <div id="login-section" class="card">
+        <!-- MODO TESTE -->
+        <div id="login-section" class="card" style="display:none;">
             <h1>ADMIN | Calistenia Pro</h1>
-            <p style="color:#888; margin-bottom:10px; font-size:0.9rem;">Acesso restrito ao administrador</p>
-            <input type="password" id="admin-pass" placeholder="Senha do sistema"
-                onkeydown="if(event.key==='Enter') checkAdmin()">
-            <button onclick="checkAdmin()">ENTRAR</button>
         </div>
 
         <!-- PAINEL PRINCIPAL -->
-        <div id="main-panel" style="display:none;">
+        <div id="main-panel" style="display:block;">
 
             <div class="card">
                 <h1>PAINEL DE CONTROLE</h1>
+                <p style="color:#888; margin-bottom:16px; font-size:0.9rem;">Modo teste ativo: acesso direto sem senha.</p>
                 <div class="stats">
                     <div class="stat">
                         <div class="num" id="stat-total">0</div>
@@ -321,9 +318,16 @@
     <script src="database.js"></script>
     <script>
         const ADMIN_PASS = 'admin123';
+        const TEST_MODE = new URLSearchParams(window.location.search).get('test') === '1';
         var videoEdits = {};
 
         function checkAdmin() {
+            if (TEST_MODE) {
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('main-panel').style.display = 'block';
+                initAdmin();
+                return;
+            }
             var pass = document.getElementById('admin-pass').value;
             if (pass === ADMIN_PASS) {
                 document.getElementById('login-section').style.display = 'none';
@@ -332,6 +336,12 @@
             } else {
                 alert('Senha incorreta.');
             }
+        }
+
+        if (TEST_MODE) {
+            window.addEventListener('DOMContentLoaded', function () {
+                checkAdmin();
+            });
         }
 
         function initAdmin() {

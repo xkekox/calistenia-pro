@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Importador em Massa - Calistenia Pro</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>body{font-family:sans-serif;padding:20px;background:#111;color:#fff;} input{padding:10px;width:300px;} button{padding:10px 20px;cursor:pointer;background:#0f0;font-weight:bold;}</style>
+</head>
+<body>
+    <h1>Injetor de 300 Exercícios</h1>
+    <p>Use suas chaves do Supabase para preencher o banco de dados automaticamente.</p>
+    <input type="text" id="url" placeholder="Supabase URL">
+    <input type="text" id="key" placeholder="Supabase Key">
+    <button onclick="importar()">INICIAR IMPORTAÇÃO</button>
+    <div id="log" style="margin-top:20px; font-family:monospace; color:#0f0;"></div>
+
+    <script>
+        // GERADOR DE 300 EXERCÍCIOS
+        const tipos = ['push', 'legs', 'core', 'cardio'];
+        const nomesBase = {
+            push: ['Flexão', 'Mergulho', 'Flexão Diamante', 'Pike Pushup'],
+            legs: ['Agachamento', 'Afundo', 'Sumô', 'Panturrilha'],
+            core: ['Prancha', 'Abdominal', 'Elevação de Pernas', 'Russian Twist'],
+            cardio: ['Polichinelo', 'Burpee', 'Mountain Climber', 'Corrida Estacionária']
+        };
+
+        function gerarExercicios() {
+            let lista = [];
+            for (let dia = 1; dia <= 21; dia++) {
+                tipos.forEach(tipo => {
+                    const baseIndex = (dia - 1) % 4; // Garante índice válido (0-3)
+                    
+                    // Variação 1: Normal
+                    lista.push({
+                        day: dia, type: type, avoid: 'none', // Usando nomes de colunas compatíveis com Supabase (day, type, avoid)
+                        name: `${nomesBase[tipo][baseIndex]} (Dia ${dia})`,
+                        description: `Série padrão de alta intensidade. 3x 12-15 reps.`,
+                        video_url: '' 
+                    });
+
+                    // Variação 2: Ombro
+                    if(tipo === 'push' || tipo === 'cardio') {
+                         lista.push({
+                            day: dia, type: type, avoid: 'ombro',
+                            name: `${nomesBase[tipo][baseIndex]} Adaptado (Parede/Isométrico)`,
+                            description: `Variação segura para ombros. Foco na contração sem movimento articular brusco.`,
+                            video_url: ''
+                        });
+                    }
+
+                    // Variação 3: Joelho
+                    if(tipo === 'legs' || tipo === 'cardio') {
+                         lista.push({
+                            day: dia, type: type, avoid: 'joelho',
+                            name: `${nomesBase[tipo][baseIndex]} Adaptado (Sem Impacto)`,
+                            description: `Variação segura para joelhos. Movimentos controlados e isometria.`,
+                            video_url: ''
+                        });
+                    }
+
+                    // Variação 4: Lombar
+                    if(tipo === 'core' || tipo === 'legs') {
+                         lista.push({
+                            day: dia, type: type, avoid: 'lombar',
+                            name: `${nomesBase[tipo][baseIndex]} (Apoio Lombar)`,
+                            description: `Mantenha a coluna apoiada totalmente no chão.`,
+                            video_url: ''
+                        });
+                    }
+                });
+            }
+            return lista;
+        }
+
+        async function importar() {
+            const url = document.getElementById('url').value;
+            const key = document.getElementById('key').value;
+            if(!url || !key) return alert('Preencha URL e Key!');
+
+            const supabase = window.supabase.createClient(url, key);
+            const dados = gerarExercicios();
+            const log = document.getElementById('log');
+
+            log.innerHTML = `Gerando ${dados.length} exercícios...<br>`;
+
+            // Envia em lotes de 50
+            for (let i = 0; i < dados.length; i += 50) {
+                const lote = dados.slice(i, i + 50);
+                // Mapeando para as colunas exatas da tabela criada: dia, tipo, nome, descricao, restricao, video_url
+                const loteFormatado = lote.map(d => ({
+                    dia: d.day,
+                    tipo: d.type,
+                    nome: d.name,
+                    descricao: d.description,
+                    restricao: d.avoid,
+                    video_url: d.video_url
+                }));
+
+                const { error } = await supabase.from('exercicios').insert(loteFormatado);
+                
+                if (error) {
+                    log.innerHTML += `Erro no lote ${i}: ${error.message}<br>`;
+                    return;
+                }
+                log.innerHTML += `Lote ${i} a ${i+50} importado com sucesso...<br>`;
+            }
+
+            log.innerHTML += `<br><b>SUCESSO TOTAL! ${dados.length} EXERCÍCIOS CADASTRADOS.</b><br>O sistema está pronto para filtrar as dores.`;
+        }
+    </script>
+</body>
+</html>
