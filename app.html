@@ -766,25 +766,6 @@
                 completedDays: response.data.completed_days || {},
                 lastCompletedDate: response.data.last_completed_date || null,
                 assessmentDone: !!response.data.assessment_done
-        async function loadCloud(authUser) {
-            if (!cloudEnabled || !supabaseClient || !authUser) return false;
-            var response = await supabaseClient
-                .from('calpro_user_state')
-                .select('*')
-                .eq('user_id', authUser.id)
-                .maybeSingle();
-
-            if (response.error) throw response.error;
-            if (!response.data) return false;
-
-            u = {
-                userId: authUser.id,
-                email: response.data.email || authUser.email || '',
-                day: response.data.day || 1,
-                restrictions: response.data.restrictions || [],
-                completedDays: response.data.completed_days || {},
-                lastCompletedDate: response.data.last_completed_date || null,
-                assessmentDone: !!response.data.assessment_done
             };
             saveLocal();
             return true;
