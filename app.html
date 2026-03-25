@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
@@ -173,7 +173,7 @@
             line-height: 1.45;
         }
 
-        /* ASSESSMENT — checkboxes */
+        /* ASSESSMENT â€” checkboxes */
         .restriction-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -386,14 +386,25 @@
             border-radius: 10px;
             overflow: hidden;
             margin-top: 10px;
-            display: none;
+            display: block;
             border: 1px solid #222;
+            position: relative;
         }
 
         .vid-box iframe {
             width: 100%;
             height: 100%;
             border: none;
+            pointer-events: none;
+        }
+
+        .vid-box::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            background: transparent;
+            pointer-events: auto;
         }
 
         /* REST / LOCK TIMER */
@@ -513,7 +524,7 @@
         </div>
     </div>
 
-    <!-- DASHBOARD — 21 DIAS -->
+    <!-- DASHBOARD â€” 21 DIAS -->
     <div id="screen-dashboard" class="screen">
         <div class="top-bar">
             <span class="logo">CALISTENIA PRO</span>
@@ -531,9 +542,7 @@
         </div>
 
         <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
-            <button class="btn secondary" style="margin-top:0; flex:1;" onclick="resetProgress()">RESETAR TESTE</button>
-            <button class="btn secondary" style="margin-top:0; flex:1;" onclick="unlockTodayForTest()">LIBERAR DIA</button>
-            <button class="btn secondary" style="margin-top:0; flex:1;" onclick="logout()">SAIR</button>
+                                    <button class="btn secondary" style="margin-top:0; flex:1;" onclick="logout()">SAIR</button>
         </div>
 
         <div class="days-grid" id="days-grid"></div>
@@ -577,33 +586,12 @@
             <div class="timer-big" id="timer">00:00:00</div>
             <p style="color:#555; font-size:0.75rem; margin-bottom:20px;">Novo treino libera a meia-noite</p>
             <button class="btn secondary" onclick="showScreen('screen-dashboard')">&#8592; VER TODOS OS DIAS</button>
-            <button class="btn secondary" onclick="unlockTodayForTest()">REPETIR TESTE AGORA</button>
-            <button class="btn secondary" onclick="resetProgress()">RESETAR TESTE</button>
-        </div>
+                                </div>
     </div>
 
-    <!-- Script dinâmico para evitar cache e buscar versao remota se disponivel -->
+    <script src="database.js?v=2"></script>
     <script>
-        (function () {
-            const REPO_URL = 'https://raw.githubusercontent.com/xkekox/calistenia-pro/main/database.js';
-            const localScript = 'database.js?v=' + new Date().getTime();
-
-            console.log('[AIOS:DEV] Tentando sincronizar banco de dados remoto...');
-
-            // Tenta carregar o banco remoto (GitHub) para ter os videos do Admin
-            var sRemoto = document.createElement('script');
-            sRemoto.src = REPO_URL + '?v=' + new Date().getTime();
-            sRemoto.onerror = function () {
-                console.warn('[AIOS:DEV] Falha ao carregar banco remoto. Usando banco local.');
-                var sLocal = document.createElement('script');
-                sLocal.src = localScript;
-                document.head.appendChild(sLocal);
-            };
-            sRemoto.onload = function () {
-                console.log('[AIOS:DEV] Banco de dados remoto (GitHub) sincronizado com sucesso!');
-            };
-            document.head.appendChild(sRemoto);
-        })();
+        console.log('[AIOS:DEV] Banco de dados local carregado. Overrides de video virao do Supabase quando disponivel.');
 
         // ======================================================
         // ESTADO DO USUARIO
@@ -644,6 +632,9 @@
         }
 
         function showScreen(id) {
+            if (id === 'screen-assessment' && u && u.assessmentDone) {
+                id = 'screen-dashboard';
+            }
             const screen = document.getElementById(id);
             if (!screen) {
                 console.error('[AIOS:DEV] Erro: Tela nao encontrada:', id);
@@ -775,9 +766,52 @@
                 completedDays: response.data.completed_days || {},
                 lastCompletedDate: response.data.last_completed_date || null,
                 assessmentDone: !!response.data.assessment_done
+        async function loadCloud(authUser) {
+            if (!cloudEnabled || !supabaseClient || !authUser) return false;
+            var response = await supabaseClient
+                .from('calpro_user_state')
+                .select('*')
+                .eq('user_id', authUser.id)
+                .maybeSingle();
+
+            if (response.error) throw response.error;
+            if (!response.data) return false;
+
+            u = {
+                userId: authUser.id,
+                email: response.data.email || authUser.email || '',
+                day: response.data.day || 1,
+                restrictions: response.data.restrictions || [],
+                completedDays: response.data.completed_days || {},
+                lastCompletedDate: response.data.last_completed_date || null,
+                assessmentDone: !!response.data.assessment_done
             };
             saveLocal();
             return true;
+        }
+
+        async function loadSupabaseVideoOverrides() {
+            if (!cloudEnabled || !supabaseClient || !window.exerciseDB || !Array.isArray(window.exerciseDB)) return false;
+            var response = await supabaseClient
+                .from('calpro_exercise_videos')
+                .select('exercise_id, video_url');
+
+            if (response.error) throw response.error;
+
+            var overrideMap = {};
+            (response.data || []).forEach(function (row) {
+                if (row.exercise_id && row.video_url) {
+                    overrideMap[row.exercise_id] = row.video_url;
+                }
+            });
+
+            window.exerciseDB.forEach(function (ex) {
+                if (overrideMap[ex.id] !== undefined) {
+                    ex.video_url = overrideMap[ex.id];
+                }
+            });
+
+            return Object.keys(overrideMap).length > 0;
         }
 
         async function hydrateAuthenticatedUser(authUser) {
@@ -788,6 +822,12 @@
                 loadedRemote = await loadCloud(authUser);
             } catch (e) {
                 console.error('[AIOS:DEV] Falha ao carregar progresso do Supabase:', e);
+            }
+
+            try {
+                await loadSupabaseVideoOverrides();
+            } catch (e) {
+                console.error('[AIOS:DEV] Falha ao carregar overrides de video do Supabase:', e);
             }
 
             if (!loadedRemote) {
@@ -928,7 +968,7 @@
             }
 
             if (response.data.user && response.data.user.identities && response.data.user.identities.length === 0) {
-                setAuthStatus('Esse e-mail já está cadastrado. Use ENTRAR AGORA ou RECUPERAR SENHA.', true);
+                setAuthStatus('Esse e-mail jÃ¡ estÃ¡ cadastrado. Use ENTRAR AGORA ou RECUPERAR SENHA.', true);
                 return;
             }
 
@@ -1061,6 +1101,10 @@
         }
 
         function confirmAssessment() {
+            if (u.assessmentDone) {
+                openDashboard();
+                return;
+            }
             u.restrictions = tempRestrictions.slice();
             u.assessmentDone = true;
             save();
@@ -1158,47 +1202,42 @@
             showScreen('screen-workout');
         }
 
+        function buildProtectedMediaHtml(ex) {
+            var vidData = getVideoData(ex.video_url);
+            if (!vidData) return '';
+
+            if (vidData.type === 'file') {
+                return '<div class="vid-box"><video autoplay muted loop playsinline preload="auto"><source src="' + vidData.src + '"></video></div>';
+            }
+
+            return '<div class="vid-box vid-protected">'
+                + '<div class="vid-protected-badge">MODO PROTEGIDO</div>'
+                + '<div class="vid-protected-title">Video externo bloqueado no app</div>'
+                + '<div class="vid-protected-text">Links de YouTube e TikTok nao ficam mais clicaveis aqui. Para reproduzir dentro do app sem saida externa, publique MP4 proprio.</div>'
+                + '</div>';
+        }
+
         function showCurrentExercise() {
             var ex = currentExercises[currentExIndex];
             var total = currentExercises.length;
             document.getElementById('ex-counter').innerText = 'EXERCICIO ' + (currentExIndex + 1) + ' DE ' + total;
 
-            var vidData = getVideoData(ex.video_url);
             var isAdapted = ex.avoid !== 'none';
             var tagText = isAdapted ? 'ADAPTADO' : 'SEGURO';
             var tagClass = isAdapted ? 'ex-tag adapted' : 'ex-tag';
-            var videoHtml = '';
-            if (vidData) {
-                videoHtml = '<span class="vid-toggle" onclick="toggleVid(\'' + ex.id + '\')">&#9654; VER VIDEO</span>' +
-                    '<div class="vid-box" id="vid-' + ex.id + '">';
-
-                if (vidData.type === 'youtube') {
-                    videoHtml += '<iframe src="https://www.youtube.com/embed/' + vidData.id + '" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>';
-                } else if (vidData.type === 'tiktok') {
-                    // Fallback local: abre no TikTok se o player embutido falhar
-                    videoHtml += '<iframe src="https://www.tiktok.com/player/v1/' + vidData.id + '?music_info=1&description=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>' +
-                        '<div style="margin-top:8px;"><a href="' + ex.video_url + '" target="_blank" rel="noopener" style="color:var(--accent); font-weight:700; text-decoration:none;">ABRIR VIDEO NO TIKTOK</a></div></div>';
-                }
-            }
-            var html = '<div class="ex-card">' +
-                '<span class="' + tagClass + '">' + tagText + '</span>' +
-                '<h3>' + ex.name.replace(' - Dia ' + currentDay, '') + '</h3>' +
-                '<p>' + ex.desc + '</p>' + videoHtml + '</div>';
+            var videoHtml = buildProtectedMediaHtml(ex);
+            var html = '<div class="ex-card">'
+                + '<span class="' + tagClass + '">' + tagText + '</span>'
+                + '<h3>' + ex.name.replace(' - Dia ' + currentDay, '') + '</h3>'
+                + '<p>' + ex.desc + '</p>'
+                + videoHtml
+                + '</div>';
             document.getElementById('ex-current').innerHTML = html;
 
             var isLast = currentExIndex === total - 1;
             var btn = document.getElementById('btn-done');
             btn.innerText = isLast ? '&#10003; CONCLUIR ULTIMO EXERCICIO' : '&#10003; TERMINEI ESTE EXERCICIO';
             btn.innerHTML = isLast ? '&#10003; CONCLUIR ULTIMO EXERCICIO' : '&#10003; TERMINEI ESTE EXERCICIO';
-        }
-
-        function exerciseDone() {
-            var isLast = currentExIndex === currentExercises.length - 1;
-            if (isLast) {
-                finishDay();
-            } else {
-                startRest();
-            }
         }
 
         function startRest() {
@@ -1239,10 +1278,6 @@
             }
         }
 
-        function toggleVid(id) {
-            var box = document.getElementById('vid-' + id);
-            box.style.display = box.style.display === 'block' ? 'none' : 'block';
-        }
 
         function getVideoData(url) {
             if (!url) return null;
@@ -1286,22 +1321,10 @@
         }
 
         function resetProgress() {
-            u.day = 1;
-            u.completedDays = {};
-            u.lastCompletedDate = null;
-            u.assessmentDone = false;
-            tempRestrictions = [];
-            save();
-            showScreen('screen-assessment');
+            openDashboard();
         }
 
         function unlockTodayForTest() {
-            if (u.day > 1) {
-                delete u.completedDays[u.day - 1];
-                u.day = u.day - 1;
-            }
-            u.lastCompletedDate = null;
-            save();
             openDashboard();
         }
 
@@ -1313,6 +1336,11 @@
 
             await initSupabase();
             if (cloudEnabled && supabaseClient) {
+                try {
+                    await loadSupabaseVideoOverrides();
+                } catch (e) {
+                    console.error('[AIOS:DEV] Falha ao sincronizar videos publicados no Supabase:', e);
+                }
                 var sessionResponse = await supabaseClient.auth.getSession();
                 if (sessionResponse.data && sessionResponse.data.session && sessionResponse.data.session.user) {
                     await hydrateAuthenticatedUser(sessionResponse.data.session.user);
@@ -1325,6 +1353,7 @@
 
         function startTimer() {
             function tick() {
+
                 var midnight = new Date();
                 midnight.setHours(24, 0, 0, 0);
                 var diff = midnight - new Date();
@@ -1344,3 +1373,6 @@
 </body>
 
 </html>
+
+
+
