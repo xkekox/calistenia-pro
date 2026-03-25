@@ -748,7 +748,8 @@
         <div class="top-bar"><span class="logo">CALISTENIA PRO</span></div>
         <div class="card" style="margin-top: 40px;">
             <p class="card-title">Acesso ao Desafio</p>
-            <p class="auth-note">Use o mesmo e-mail da compra. No primeiro acesso, crie sua senha. Depois, entre sempre com e-mail e senha.</p>
+            <p class="auth-note">Use o mesmo e-mail da compra. No primeiro acesso, informe seu nome e crie sua senha. Depois, entre sempre com e-mail e senha.</p>
+            <input type="text" id="full-name" placeholder="Seu nome completo">
             <input type="email" id="email" placeholder="seuemail@gmail.com">
             <input type="password" id="password" placeholder="Sua senha de acesso">
             <button class="btn" onclick="login()">ENTRAR AGORA</button>
@@ -976,6 +977,19 @@
             if (!email) return 'Aluno';
             var base = String(email).split('@')[0].replace(/[._-]+/g, ' ').trim();
             return base ? titleCaseWords(base) : 'Aluno';
+        }
+
+        function getAuthName() {
+            var input = document.getElementById('full-name');
+            return input ? titleCaseWords((input.value || '').trim()) : '';
+        }
+
+        function syncStudentProfileName(name) {
+            var cleanName = titleCaseWords(String(name || '').trim());
+            if (!cleanName) return;
+            ensureStudentProfile(u.email || '');
+            studentProfile.name = cleanName;
+            saveStudentProfile();
         }
 
         function defaultStudentProfile(email) {
@@ -1408,6 +1422,7 @@
             }
 
             var e = emailInput.value.trim();
+            var authName = getAuthName();
             if (e.length < 5 || e.indexOf('@') < 0) {
                 setAuthStatus('Por favor, digite um e-mail valido.', true);
                 return;
@@ -1435,11 +1450,16 @@
                 }
 
                 await hydrateAuthenticatedUser(signInResponse.data.user);
+                if (authName) {
+                    syncStudentProfileName(authName);
+                    openDashboard();
+                }
                 return;
             }
 
             if (loadLocal(e)) {
                 console.log('[AIOS:DEV] Usuario carregado com sucesso.');
+                if (authName) syncStudentProfileName(authName);
                 if (u.assessmentDone) {
                     openDashboard();
                 } else {
@@ -1448,6 +1468,7 @@
             } else {
                 console.log('[AIOS:DEV] Novo usuario detectado ou erro no load. Iniciando avaliacao.');
                 u = blankUser(e, '');
+                if (authName) syncStudentProfileName(authName);
                 showScreen('screen-assessment');
             }
         }
@@ -1458,8 +1479,13 @@
                 return;
             }
 
+            var name = getAuthName();
             var email = document.getElementById('email').value.trim();
             var password = document.getElementById('password').value.trim();
+            if (name.length < 3) {
+                setAuthStatus('Digite seu nome para criar o acesso.', true);
+                return;
+            }
             if (email.length < 5 || email.indexOf('@') < 0) {
                 setAuthStatus('Digite um e-mail valido para criar o acesso.', true);
                 return;
@@ -1476,7 +1502,11 @@
                 password: password,
                 options: {
                     emailRedirectTo: cfg.redirectUrl,
-                    data: { product: 'calistenia-pro' }
+                    data: {
+                        product: 'calistenia-pro',
+                        name: name,
+                        full_name: name
+                    }
                 }
             });
 
@@ -1492,9 +1522,13 @@
 
             if (response.data.user && response.data.session) {
                 await hydrateAuthenticatedUser(response.data.user);
+                syncStudentProfileName(name);
+                openDashboard();
                 return;
             }
 
+            u.email = email;
+            syncStudentProfileName(name);
             setAuthStatus('Conta criada. Verifique seu e-mail para confirmar o acesso antes de entrar.', false);
         }
 
