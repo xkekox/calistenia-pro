@@ -1275,6 +1275,15 @@
             btn.innerHTML = isLast ? '&#10003; CONCLUIR ULTIMO EXERCICIO' : '&#10003; TERMINEI ESTE EXERCICIO';
         }
 
+        function exerciseDone() {
+            var isLast = currentExIndex === currentExercises.length - 1;
+            if (isLast) {
+                finishDay();
+            } else {
+                startRest();
+            }
+        }
+
         function startRest() {
             var nextEx = currentExercises[currentExIndex + 1];
             document.getElementById('rest-next-name').innerText =
