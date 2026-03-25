@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seu Plano Recomendado | Calistenia Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4d00;
+            --bg: #080808;
+            --card: #141414;
+            --text: #fff;
+            --muted: #8c8c8c;
+            --border: #252525;
+            --ok: #00d084;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top, #221005 0%, #080808 52%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .wrap {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .eyebrow {
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.3rem);
+            line-height: 1.02;
+            margin-bottom: 14px;
+        }
+
+        .lead {
+            color: var(--muted);
+            line-height: 1.65;
+            margin-bottom: 26px;
+            max-width: 660px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 26px;
+            margin-bottom: 18px;
+        }
+
+        .result-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 14px;
+            border-radius: 999px;
+            background: rgba(0, 208, 132, 0.09);
+            color: var(--ok);
+            font-size: 0.88rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .plan-title {
+            font-size: 1.35rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .plan-text {
+            color: var(--muted);
+            line-height: 1.65;
+            margin-bottom: 16px;
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .chip {
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: #101010;
+            border: 1px solid #232323;
+            font-size: 0.88rem;
+            color: #d6d6d6;
+        }
+
+        .list {
+            display: grid;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .item {
+            background: #101010;
+            border: 1px solid #202020;
+            border-radius: 16px;
+            padding: 14px 16px;
+        }
+
+        .item strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .item span {
+            color: var(--muted);
+            line-height: 1.55;
+            font-size: 0.95rem;
+        }
+
+        .actions {
+            display: grid;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            text-align: center;
+            padding: 18px 22px;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 900;
+            letter-spacing: 0.4px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 16px 32px rgba(255, 77, 0, 0.23);
+        }
+
+        .btn-secondary {
+            background: #1a1a1a;
+            color: #ddd;
+            border: 1px solid #2b2b2b;
+        }
+
+        .small {
+            margin-top: 14px;
+            color: #7d7d7d;
+            font-size: 0.88rem;
+        }
+    </style>
+</head>
+<body>
+    <main class="wrap">
+        <div class="eyebrow">Plano Recomendado</div>
+        <h1 id="headline">Seu corpo pede uma versão mais segura do desafio</h1>
+        <p class="lead" id="lead">Com base na sua avaliação, o sistema do Calistenia Pro recomenda a adaptação certa para você começar com segurança e constância.</p>
+
+        <section class="card">
+            <div class="result-badge">✓ Resultado baseado na sua avaliação</div>
+            <div class="plan-title" id="plan-title">Versão adaptada do desafio 21 dias</div>
+            <p class="plan-text" id="plan-text"></p>
+            <div class="chips" id="chips"></div>
+        </section>
+
+        <section class="card">
+            <div class="plan-title">O que você recebe</div>
+            <div class="list">
+                <div class="item">
+                    <strong>Treino ajustado às suas dores</strong>
+                    <span>O sistema escolhe versões específicas de exercícios para ombro, joelho e lombar quando necessário.</span>
+                </div>
+                <div class="item">
+                    <strong>Progressão de 21 dias</strong>
+                    <span>Você entra em rotina com um plano diário e progressivo, pensado para treino em casa.</span>
+                </div>
+                <div class="item">
+                    <strong>Acesso imediato pelo app</strong>
+                    <span>Após a compra, você entra com seu e-mail e começa o desafio sem depender de academia.</span>
+                </div>
+            </div>
+
+            <div class="actions">
+                <a class="btn btn-primary" id="checkout-btn" href="https://xkekox.github.io/calistenia-pro/obrigado.html">QUERO LIBERAR MEU ACESSO AGORA</a>
+                <a class="btn btn-secondary" href="quiz.html">REFZER A AVALIAÇÃO</a>
+            </div>
+            <p class="small">Troque o link principal pelo checkout real da Hotmart assim que ele estiver pronto.</p>
+        </section>
+    </main>
+
+    <script>
+        var raw = localStorage.getItem('calpro_quiz_result');
+        var data = raw ? JSON.parse(raw) : { pains: [], level: 'iniciante', goal: 'comecar' };
+
+        var painMap = {
+            ombro: 'Proteção para Ombro',
+            joelho: 'Proteção para Joelho',
+            lombar: 'Proteção para Lombar'
+        };
+
+        var hasPain = data.pains && data.pains.length > 0;
+        var headline = hasPain
+            ? 'Seu plano ideal é a versão adaptada do Calistenia Pro'
+            : 'Seu perfil combina com a versão padrão do Calistenia Pro';
+        var lead = hasPain
+            ? 'Você indicou limitações físicas, então a melhor rota é começar com treinos adaptados para proteger as regiões mais sensíveis e manter constância.'
+            : 'Você não indicou limitações físicas no momento. A recomendação é seguir a versão padrão do desafio, com progressão diária e treino em casa.';
+        var planText = hasPain
+            ? 'Sua avaliação mostra que o produto precisa respeitar dores e limitações já no início. Por isso, o sistema vai priorizar versões mais seguras dos exercícios e adaptar os dias em que houver risco de sobrecarga.'
+            : 'Sua avaliação mostra que você pode seguir a progressão principal do desafio. Ainda assim, o sistema mantém a lógica de progressão por dias para evitar excesso e ajudar na constância.';
+
+        document.getElementById('headline').innerText = headline;
+        document.getElementById('lead').innerText = lead;
+        document.getElementById('plan-title').innerText = hasPain ? 'Versão adaptada do desafio 21 dias' : 'Versão padrão do desafio 21 dias';
+        document.getElementById('plan-text').innerText = planText;
+
+        var chips = document.getElementById('chips');
+        if (hasPain) {
+            data.pains.forEach(function (pain) {
+                var chip = document.createElement('div');
+                chip.className = 'chip';
+                chip.innerText = painMap[pain] || pain;
+                chips.appendChild(chip);
+            });
+        } else {
+            var chip = document.createElement('div');
+            chip.className = 'chip';
+            chip.innerText = 'Sem limitações físicas informadas';
+            chips.appendChild(chip);
+        }
+
+        var chipLevel = document.createElement('div');
+        chipLevel.className = 'chip';
+        chipLevel.innerText = data.level === 'iniciante' ? 'Perfil iniciante' : 'Perfil intermediário';
+        chips.appendChild(chipLevel);
+    </script>
+</body>
+</html>

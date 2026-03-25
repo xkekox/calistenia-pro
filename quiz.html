@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação Física | Calistenia Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4d00;
+            --bg: #080808;
+            --card: #141414;
+            --text: #ffffff;
+            --muted: #8a8a8a;
+            --border: #242424;
+            --ok: #00d084;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top, #221005 0%, #080808 52%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .wrap {
+            width: 100%;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .eyebrow {
+            color: var(--primary);
+            font-size: 0.82rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            line-height: 1.02;
+            margin-bottom: 14px;
+        }
+
+        .intro {
+            color: var(--muted);
+            line-height: 1.65;
+            max-width: 640px;
+            margin-bottom: 28px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 18px;
+        }
+
+        .q-title {
+            font-size: 1.12rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .q-desc {
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.55;
+            margin-bottom: 18px;
+        }
+
+        .options {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option {
+            display: block;
+            background: #111;
+            border: 1px solid #262626;
+            border-radius: 16px;
+            padding: 16px 18px;
+            cursor: pointer;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .option:hover {
+            border-color: #4a4a4a;
+        }
+
+        .option input {
+            display: none;
+        }
+
+        .option strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .option span {
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .option.active {
+            border-color: var(--primary);
+            background: rgba(255, 77, 0, 0.08);
+        }
+
+        .multi-grid {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+
+        .cta {
+            margin-top: 10px;
+            width: 100%;
+            border: none;
+            border-radius: 18px;
+            padding: 18px 22px;
+            background: var(--primary);
+            color: white;
+            font-size: 1rem;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 16px 34px rgba(255, 77, 0, 0.22);
+        }
+
+        .helper {
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            color: var(--ok);
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <main class="wrap">
+        <div class="eyebrow">Avaliação Inteligente</div>
+        <h1>Descubra qual versão do desafio combina com o seu corpo</h1>
+        <p class="intro">Antes de entrar no Calistenia Pro, responda esta avaliação rápida. O sistema usa essas respostas para indicar a melhor adaptação dos exercícios conforme dores no ombro, joelho ou lombar.</p>
+
+        <section class="card">
+            <div class="q-title">1. Você sente dor ou limitação em alguma região?</div>
+            <div class="q-desc">Selecione todas as opções que se aplicam ao seu caso hoje.</div>
+            <div class="multi-grid" id="pain-grid">
+                <label class="option" data-checkbox>
+                    <input type="checkbox" value="ombro">
+                    <strong>Ombro</strong>
+                    <span>Evitar movimentos que forcem a articulação.</span>
+                </label>
+                <label class="option" data-checkbox>
+                    <input type="checkbox" value="joelho">
+                    <strong>Joelho</strong>
+                    <span>Reduzir impacto e amplitude agressiva.</span>
+                </label>
+                <label class="option" data-checkbox>
+                    <input type="checkbox" value="lombar">
+                    <strong>Lombar</strong>
+                    <span>Controlar carga e proteger a coluna.</span>
+                </label>
+                <label class="option" data-checkbox>
+                    <input type="checkbox" value="none">
+                    <strong>Sem limitações</strong>
+                    <span>Você pode seguir a versão padrão do desafio.</span>
+                </label>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="q-title">2. Qual é o seu nível hoje?</div>
+            <div class="q-desc">Isso ajuda a comunicar o resultado do seu plano de forma mais certeira.</div>
+            <div class="options" data-radio-group="level">
+                <label class="option active">
+                    <input type="radio" name="level" value="iniciante" checked>
+                    <strong>Iniciante</strong>
+                    <span>Quero começar com segurança e constância.</span>
+                </label>
+                <label class="option">
+                    <input type="radio" name="level" value="intermediario">
+                    <strong>Intermediário</strong>
+                    <span>Já treino um pouco, mas quero um plano melhor estruturado.</span>
+                </label>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="q-title">3. O que você mais quer agora?</div>
+            <div class="q-desc">Isso melhora o enquadramento do resultado e a comunicação da oferta.</div>
+            <div class="options" data-radio-group="goal">
+                <label class="option active">
+                    <input type="radio" name="goal" value="comecar" checked>
+                    <strong>Começar a treinar sem me machucar</strong>
+                    <span>Entrar em rotina e ganhar consistência.</span>
+                </label>
+                <label class="option">
+                    <input type="radio" name="goal" value="fortalecer">
+                    <strong>Fortalecer o corpo com progressão</strong>
+                    <span>Ganhar evolução com um plano de 21 dias.</span>
+                </label>
+            </div>
+
+            <button class="cta" id="quiz-submit">VER MEU PLANO RECOMENDADO</button>
+            <div class="badge">✓ Resultado adaptado para o seu perfil</div>
+            <p class="helper">Ao continuar, você verá qual versão do Calistenia Pro faz mais sentido para sua situação atual.</p>
+        </section>
+    </main>
+
+    <script>
+        function syncOptionStates(scope) {
+            (scope || document).querySelectorAll('.option').forEach(function (el) {
+                var input = el.querySelector('input');
+                if (!input) return;
+                el.classList.toggle('active', !!input.checked);
+            });
+        }
+
+        document.querySelectorAll('[data-radio-group]').forEach(function (group) {
+            group.addEventListener('change', function () { syncOptionStates(group); });
+        });
+
+        document.getElementById('pain-grid').addEventListener('change', function (event) {
+            var target = event.target;
+            if (target.value === 'none' && target.checked) {
+                document.querySelectorAll('#pain-grid input[type="checkbox"]').forEach(function (cb) {
+                    if (cb.value !== 'none') cb.checked = false;
+                });
+            } else if (target.value !== 'none' && target.checked) {
+                var noPain = document.querySelector('#pain-grid input[value="none"]');
+                if (noPain) noPain.checked = false;
+            }
+            syncOptionStates(document.getElementById('pain-grid'));
+        });
+
+        syncOptionStates(document);
+
+        document.getElementById('quiz-submit').addEventListener('click', function () {
+            var pains = Array.from(document.querySelectorAll('#pain-grid input:checked')).map(function (input) { return input.value; });
+            if (!pains.length) {
+                alert('Selecione pelo menos uma opção na avaliação física.');
+                return;
+            }
+
+            var payload = {
+                pains: pains.includes('none') ? [] : pains,
+                level: document.querySelector('input[name="level"]:checked').value,
+                goal: document.querySelector('input[name="goal"]:checked').value,
+                createdAt: new Date().toISOString()
+            };
+
+            localStorage.setItem('calpro_quiz_result', JSON.stringify(payload));
+            window.location.href = 'resultado.html';
+        });
+    </script>
+</body>
+</html>
