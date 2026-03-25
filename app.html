@@ -407,6 +407,11 @@
             pointer-events: auto;
         }
 
+        .video-action {
+            margin-top: 10px;
+            width: 100%;
+        }
+
         /* REST / LOCK TIMER */
         .timer-big {
             font-family: 'Orbitron', sans-serif;
@@ -1188,20 +1193,52 @@
             if (!vidData) return '';
 
             if (vidData.type === 'file') {
-                return '<div class="vid-box"><video autoplay muted loop playsinline preload="auto"><source src="' + vidData.src + '"></video></div>';
+                return '<div class="vid-box" id="vid-' + ex.id + '"><video muted loop playsinline preload="auto"><source src="' + vidData.src + '"></video></div>'
+                    + '<button class="btn secondary video-action" data-video-id="' + ex.id + '" onclick="playExerciseVideo(this)">PLAY VIDEO</button>';
             }
 
             if (vidData.type === 'youtube') {
-                return '<div class="vid-box"><iframe src="https://www.youtube.com/embed/' + vidData.id + '?autoplay=1&mute=1&controls=0&rel=0&playlist=' + vidData.id + '&loop=1" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>';
+                var ytSrc = 'https://www.youtube.com/embed/' + vidData.id + '?autoplay=1&mute=1&controls=0&rel=0&playlist=' + vidData.id + '&loop=1';
+                return '<div class="vid-box" id="vid-' + ex.id + '"><iframe data-src="' + ytSrc + '" src="' + ytSrc + '" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>'
+                    + '<button class="btn secondary video-action" data-video-id="' + ex.id + '" onclick="playExerciseVideo(this)">REPRODUZIR VIDEO</button>';
             }
 
             if (vidData.type === 'tiktok') {
-                return '<div class="vid-box"><iframe src="https://www.tiktok.com/player/v1/' + vidData.id + '?music_info=0&description=0" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>';
+                var ttSrc = 'https://www.tiktok.com/player/v1/' + vidData.id + '?autoplay=1&music_info=0&description=0';
+                return '<div class="vid-box" id="vid-' + ex.id + '"><iframe data-src="' + ttSrc + '" src="' + ttSrc + '" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>'
+                    + '<button class="btn secondary video-action" data-video-id="' + ex.id + '" onclick="playExerciseVideo(this)">REPRODUZIR VIDEO</button>';
             }
 
             return '';
         }
 
+        function playExerciseVideo(trigger) {
+            var exerciseId = typeof trigger === 'string' ? trigger : trigger.getAttribute('data-video-id');
+            var box = document.getElementById('vid-' + exerciseId);
+            if (!box) return;
+
+            var video = box.querySelector('video');
+            if (video) {
+                try {
+                    video.currentTime = 0;
+                    var playPromise = video.play();
+                    if (playPromise && typeof playPromise.catch === 'function') {
+                        playPromise.catch(function () {});
+                    }
+                } catch (e) {
+                    console.warn('[AIOS:DEV] Falha ao reproduzir video local:', e);
+                }
+                return;
+            }
+
+            var frame = box.querySelector('iframe');
+            if (!frame) return;
+            var src = frame.getAttribute('data-src') || frame.getAttribute('src');
+            frame.setAttribute('src', 'about:blank');
+            window.setTimeout(function () {
+                frame.setAttribute('src', src);
+            }, 80);
+        }
 
         function showCurrentExercise() {
             var ex = currentExercises[currentExIndex];
