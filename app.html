@@ -1191,12 +1191,17 @@
                 return '<div class="vid-box"><video autoplay muted loop playsinline preload="auto"><source src="' + vidData.src + '"></video></div>';
             }
 
-            return '<div class="vid-box vid-protected">'
-                + '<div class="vid-protected-badge">MODO PROTEGIDO</div>'
-                + '<div class="vid-protected-title">Video externo bloqueado no app</div>'
-                + '<div class="vid-protected-text">Links de YouTube e TikTok nao ficam mais clicaveis aqui. Para reproduzir dentro do app sem saida externa, publique MP4 proprio.</div>'
-                + '</div>';
+            if (vidData.type === 'youtube') {
+                return '<div class="vid-box"><iframe src="https://www.youtube.com/embed/' + vidData.id + '?autoplay=1&mute=1&controls=0&rel=0&playlist=' + vidData.id + '&loop=1" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>';
+            }
+
+            if (vidData.type === 'tiktok') {
+                return '<div class="vid-box"><iframe src="https://www.tiktok.com/player/v1/' + vidData.id + '?music_info=0&description=0" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>';
+            }
+
+            return '';
         }
+
 
         function showCurrentExercise() {
             var ex = currentExercises[currentExIndex];
