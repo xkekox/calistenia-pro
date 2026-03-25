@@ -490,6 +490,233 @@
             letter-spacing: 2px;
             margin-bottom: 8px;
         }
+    
+
+        /* DASHBOARD PRO */
+        .hero-card {
+            background: linear-gradient(135deg, rgba(255, 77, 0, 0.18), rgba(255, 138, 0, 0.08));
+            border-color: rgba(255, 120, 40, 0.18);
+        }
+
+        .hero-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .hero-title {
+            font-size: 1.45rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 8px;
+        }
+
+        .hero-copy {
+            color: #b8b8b8;
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+
+        .day-badge {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            color: var(--primary);
+            background: rgba(255, 77, 0, 0.12);
+            border: 1px solid rgba(255, 77, 0, 0.25);
+            border-radius: 999px;
+            padding: 10px 14px;
+            white-space: nowrap;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .stat-card {
+            background: #101010;
+            border: 1px solid #1f1f1f;
+            border-radius: 18px;
+            padding: 16px;
+        }
+
+        .stat-label {
+            color: #7c7c7c;
+            font-size: 0.65rem;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: #fff;
+        }
+
+        .stat-note {
+            margin-top: 6px;
+            color: #8c8c8c;
+            font-size: 0.76rem;
+            line-height: 1.4;
+        }
+
+        .dash-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            margin-top: 0;
+        }
+
+        .tab-btn.active {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+
+        .dash-panel {
+            display: none;
+        }
+
+        .dash-panel.active {
+            display: block;
+        }
+
+        .today-shell {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .today-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .today-title {
+            font-size: 1.15rem;
+            font-weight: 900;
+        }
+
+        .today-copy {
+            color: #9c9c9c;
+            font-size: 0.84rem;
+            line-height: 1.5;
+            margin-top: 6px;
+        }
+
+        .today-pill {
+            font-size: 0.68rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #000;
+            background: var(--accent);
+            border-radius: 999px;
+            padding: 8px 10px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .today-meta {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .today-box {
+            background: #111;
+            border: 1px solid #202020;
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .today-box strong {
+            display: block;
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+
+        .today-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .today-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: #101010;
+            border: 1px solid #1b1b1b;
+            color: #d0d0d0;
+            font-size: 0.84rem;
+        }
+
+        .today-index {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 77, 0, 0.16);
+            color: var(--primary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .profile-line {
+            margin-top: 6px;
+            padding: 12px 14px;
+            background: #111;
+            border: 1px solid #202020;
+            border-radius: 14px;
+            color: #cfcfcf;
+            font-size: 0.86rem;
+            line-height: 1.5;
+        }
+
+        .profile-line strong {
+            display: block;
+            color: #fff;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 480px) {
+            .hero-row,
+            .today-top {
+                flex-direction: column;
+            }
+
+            .stats-grid,
+            .profile-grid,
+            .today-meta {
+                grid-template-columns: 1fr;
+            }
+
+            .dash-nav {
+                flex-wrap: wrap;
+            }
+        }
+
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js?v=1"></script>
@@ -560,6 +787,7 @@
         </div>
     </div>
 
+    
     <!-- DASHBOARD â€” 21 DIAS -->
     <div id="screen-dashboard" class="screen">
         <div class="top-bar">
@@ -567,21 +795,80 @@
             <span class="user-tag" id="dash-email"></span>
         </div>
 
-        <div style="margin-bottom:8px;">
-            <div class="prog-label">
-                <span>SEU PROGRESSO</span>
-                <span id="prog-text">0 / 21 dias</span>
+        <div class="card hero-card">
+            <p class="card-title">Painel do Aluno</p>
+            <div class="hero-row">
+                <div>
+                    <h2 class="hero-title" id="dash-greeting">SEU PLANO ESTA PRONTO</h2>
+                    <p class="hero-copy" id="dash-focus">Acompanhe seu progresso, suas calorias estimadas e o treino certo para hoje.</p>
+                </div>
+                <span class="day-badge" id="dash-day-badge">DIA 01</span>
             </div>
-            <div class="prog-wrap">
-                <div class="prog-bar" id="prog-bar" style="width:0%"></div>
+
+            <div style="margin-top:18px;">
+                <div class="prog-label">
+                    <span>SEU PROGRESSO</span>
+                    <span id="prog-text">0 / 21 dias</span>
+                </div>
+                <div class="prog-wrap">
+                    <div class="prog-bar" id="prog-bar" style="width:0%"></div>
+                </div>
             </div>
         </div>
 
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
-                                    <button class="btn secondary" style="margin-top:0; flex:1;" onclick="logout()">SAIR</button>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Dias concluidos</div>
+                <div class="stat-value" id="stat-days">0</div>
+                <div class="stat-note">dias finalizados no desafio</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Sequencia</div>
+                <div class="stat-value" id="stat-streak">0</div>
+                <div class="stat-note">dias seguidos de consistencia</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Kcal estimadas</div>
+                <div class="stat-value" id="stat-calories">0</div>
+                <div class="stat-note">estimativa acumulada do desafio</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Treino de hoje</div>
+                <div class="stat-value" id="stat-today">0</div>
+                <div class="stat-note">minutos e calorias estimadas</div>
+            </div>
         </div>
 
-        <div class="days-grid" id="days-grid"></div>
+        <div class="dash-nav">
+            <button class="btn secondary tab-btn active" id="tab-overview" onclick="switchDashboardTab('overview')">VISAO GERAL</button>
+            <button class="btn secondary tab-btn" id="tab-profile" onclick="switchDashboardTab('profile')">PERFIL</button>
+            <button class="btn secondary tab-btn" onclick="logout()">SAIR</button>
+        </div>
+
+        <div id="dashboard-overview" class="dash-panel active">
+            <div class="card">
+                <p class="card-title">Resumo do dia</p>
+                <div id="today-summary"></div>
+            </div>
+            <div class="days-grid" id="days-grid"></div>
+        </div>
+
+        <div id="dashboard-profile" class="dash-panel">
+            <div class="card">
+                <p class="card-title">Perfil do aluno</p>
+                <input type="text" id="profile-name" placeholder="Seu nome">
+                <div class="profile-grid">
+                    <input type="text" id="profile-weight" placeholder="Peso em kg">
+                    <input type="text" id="profile-height" placeholder="Altura em cm">
+                </div>
+                <input type="text" id="profile-goal" placeholder="Seu objetivo principal">
+                <div class="profile-line">
+                    Limitacoes selecionadas
+                    <strong id="profile-limits">Sem limitacoes</strong>
+                </div>
+                <button class="btn" onclick="saveStudentProfileFromForm()">SALVAR PERFIL</button>
+            </div>
+        </div>
     </div>
 
     <!-- TREINO DO DIA (um exercicio por vez) -->
@@ -666,6 +953,217 @@
                 lastCompletedDate: null,
                 assessmentDone: false
             };
+        }
+
+        var studentProfile = null;
+        var currentDashboardTab = 'overview';
+
+        function profileStorageKey(email) {
+            return STORAGE_PREFIX + 'profile_' + String(email || 'guest').toLowerCase();
+        }
+
+        function titleCaseWords(value) {
+            return String(value || '')
+                .split(' ')
+                .filter(Boolean)
+                .map(function (part) {
+                    return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+                })
+                .join(' ');
+        }
+
+        function guessNameFromEmail(email) {
+            if (!email) return 'Aluno';
+            var base = String(email).split('@')[0].replace(/[._-]+/g, ' ').trim();
+            return base ? titleCaseWords(base) : 'Aluno';
+        }
+
+        function defaultStudentProfile(email) {
+            return {
+                email: email || '',
+                name: guessNameFromEmail(email),
+                weight: '70',
+                height: '170',
+                goal: 'Criar rotina em casa'
+            };
+        }
+
+        function ensureStudentProfile(email) {
+            var normalizedEmail = email || u.email || '';
+            if (studentProfile && studentProfile.email === normalizedEmail) {
+                return studentProfile;
+            }
+
+            studentProfile = null;
+            try {
+                var saved = localStorage.getItem(profileStorageKey(normalizedEmail));
+                if (saved) {
+                    studentProfile = JSON.parse(saved);
+                }
+            } catch (e) {
+                console.warn('[AIOS:DEV] Falha ao carregar perfil do aluno.', e);
+            }
+
+            if (!studentProfile || typeof studentProfile !== 'object') {
+                studentProfile = defaultStudentProfile(normalizedEmail);
+            }
+
+            studentProfile.email = normalizedEmail;
+            return studentProfile;
+        }
+
+        function saveStudentProfile() {
+            if (!studentProfile) return;
+            try {
+                localStorage.setItem(profileStorageKey(studentProfile.email || u.email || ''), JSON.stringify(studentProfile));
+            } catch (e) {
+                console.warn('[AIOS:DEV] Falha ao salvar perfil do aluno.', e);
+            }
+        }
+
+        function parsePtDate(value) {
+            if (!value || typeof value !== 'string') return null;
+            var parts = value.split('/');
+            if (parts.length !== 3) return null;
+            var day = parseInt(parts[0], 10);
+            var month = parseInt(parts[1], 10) - 1;
+            var year = parseInt(parts[2], 10);
+            var parsed = new Date(year, month, day);
+            return isNaN(parsed.getTime()) ? null : parsed;
+        }
+
+        function formatPtDate(date) {
+            var day = String(date.getDate()).padStart(2, '0');
+            var month = String(date.getMonth() + 1).padStart(2, '0');
+            var year = date.getFullYear();
+            return day + '/' + month + '/' + year;
+        }
+
+        function getCurrentStreak() {
+            var completed = Object.keys(u.completedDays || {}).map(function (key) {
+                return u.completedDays[key];
+            }).filter(Boolean);
+
+            if (!completed.length) return 0;
+
+            var completedMap = {};
+            completed.forEach(function (entry) {
+                completedMap[entry] = true;
+            });
+
+            var anchor = parsePtDate(u.lastCompletedDate || completed[completed.length - 1]);
+            if (!anchor) return completed.length;
+
+            var streak = 0;
+            while (anchor) {
+                var label = formatPtDate(anchor);
+                if (!completedMap[label]) break;
+                streak++;
+                anchor.setDate(anchor.getDate() - 1);
+            }
+            return streak;
+        }
+
+        function getRestrictionLabel() {
+            if (!u.restrictions || !u.restrictions.length) return 'Sem limitacoes';
+            var labelMap = {
+                ombro: 'Ombros',
+                joelho: 'Joelhos',
+                lombar: 'Lombar'
+            };
+            return u.restrictions.map(function (item) {
+                return labelMap[item] || item;
+            }).join(', ');
+        }
+
+        function getWeightKg() {
+            ensureStudentProfile(u.email);
+            var raw = String(studentProfile.weight || '').replace(',', '.');
+            var parsed = parseFloat(raw);
+            return isNaN(parsed) ? 70 : parsed;
+        }
+
+        function getDayEstimate(day) {
+            var exercises = getWorkoutForDay(day, u.restrictions).filter(function (item) { return !!item; });
+            var weightKg = getWeightKg();
+            var minuteMap = {
+                push: 6,
+                legs: 7,
+                core: 5,
+                cardio: 6
+            };
+            var metMap = {
+                push: 6.0,
+                legs: 6.5,
+                core: 4.0,
+                cardio: 8.0
+            };
+
+            var totalMinutes = 0;
+            var totalCalories = 0;
+
+            exercises.forEach(function (exercise) {
+                var minutes = minuteMap[exercise.type] || 5;
+                var met = metMap[exercise.type] || 5;
+                totalMinutes += minutes;
+                totalCalories += (met * 3.5 * weightKg / 200) * minutes;
+            });
+
+            return {
+                exercises: exercises,
+                totalMinutes: totalMinutes,
+                totalCalories: Math.round(totalCalories)
+            };
+        }
+
+        function getCompletedCaloriesTotal() {
+            return Object.keys(u.completedDays || {}).reduce(function (sum, key) {
+                return sum + getDayEstimate(parseInt(key, 10)).totalCalories;
+            }, 0);
+        }
+
+        function switchDashboardTab(tab) {
+            currentDashboardTab = tab === 'profile' ? 'profile' : 'overview';
+
+            var overview = document.getElementById('dashboard-overview');
+            var profile = document.getElementById('dashboard-profile');
+            var overviewBtn = document.getElementById('tab-overview');
+            var profileBtn = document.getElementById('tab-profile');
+
+            if (overview) overview.classList.toggle('active', currentDashboardTab === 'overview');
+            if (profile) profile.classList.toggle('active', currentDashboardTab === 'profile');
+            if (overviewBtn) overviewBtn.classList.toggle('active', currentDashboardTab === 'overview');
+            if (profileBtn) profileBtn.classList.toggle('active', currentDashboardTab === 'profile');
+        }
+
+        function fillProfileForm() {
+            ensureStudentProfile(u.email);
+
+            var nameInput = document.getElementById('profile-name');
+            var weightInput = document.getElementById('profile-weight');
+            var heightInput = document.getElementById('profile-height');
+            var goalInput = document.getElementById('profile-goal');
+            var limits = document.getElementById('profile-limits');
+
+            if (nameInput) nameInput.value = studentProfile.name || '';
+            if (weightInput) weightInput.value = studentProfile.weight || '';
+            if (heightInput) heightInput.value = studentProfile.height || '';
+            if (goalInput) goalInput.value = studentProfile.goal || '';
+            if (limits) limits.innerText = getRestrictionLabel();
+        }
+
+        function saveStudentProfileFromForm() {
+            ensureStudentProfile(u.email);
+
+            studentProfile.name = (document.getElementById('profile-name').value || '').trim() || guessNameFromEmail(u.email);
+            studentProfile.weight = (document.getElementById('profile-weight').value || '').trim() || '70';
+            studentProfile.height = (document.getElementById('profile-height').value || '').trim() || '170';
+            studentProfile.goal = (document.getElementById('profile-goal').value || '').trim() || 'Criar rotina em casa';
+
+            saveStudentProfile();
+            openDashboard();
+            switchDashboardTab('profile');
+            alert('Perfil salvo com sucesso.');
         }
 
         function showScreen(id) {
@@ -775,6 +1273,7 @@
                 var saved = localStorage.getItem(STORAGE_PREFIX + email);
                 if (saved) {
                     u = JSON.parse(saved);
+                    ensureStudentProfile(u.email || email || '');
                     return true;
                 }
             } catch (e) {
@@ -804,6 +1303,7 @@
                 lastCompletedDate: response.data.last_completed_date || null,
                 assessmentDone: !!response.data.assessment_done
             };
+            ensureStudentProfile(u.email || authUser.email || '');
             saveLocal();
             return true;
         }
@@ -1132,19 +1632,29 @@
         // ======================================================
         // DASHBOARD
         // ======================================================
-        function openDashboard() {
-            console.log('[AIOS:DEV] Abrindo Dashboard...');
+        function renderDashboardStats() {
+            ensureStudentProfile(u.email);
 
-            // Garantia de integridade: se completedDays nao existir, inicializa como objeto vazio
-            if (!u.completedDays || typeof u.completedDays !== 'object') {
-                u.completedDays = {};
-            }
+            var completedCount = Object.keys(u.completedDays || {}).length;
+            var pct = Math.round((completedCount / 21) * 100);
+            var currentEstimate = getDayEstimate(u.day);
+            var greetingName = (studentProfile.name || guessNameFromEmail(u.email)).toUpperCase();
 
             var emailTag = document.getElementById('dash-email');
             if (emailTag) emailTag.innerText = u.email;
 
-            var completedCount = Object.keys(u.completedDays).length;
-            var pct = Math.round((completedCount / 21) * 100);
+            var greeting = document.getElementById('dash-greeting');
+            if (greeting) greeting.innerText = completedCount >= 21 ? 'DESAFIO CONCLUIDO' : ('BEM-VINDO, ' + greetingName);
+
+            var focus = document.getElementById('dash-focus');
+            if (focus) {
+                focus.innerText = completedCount >= 21
+                    ? 'Voce concluiu os 21 dias. Continue usando o app para revisar seu historico e manter a consistencia.'
+                    : 'Seu treino de hoje tem ' + currentEstimate.exercises.length + ' exercicios, ' + currentEstimate.totalMinutes + ' min e ' + currentEstimate.totalCalories + ' kcal estimadas.';
+            }
+
+            var dayBadge = document.getElementById('dash-day-badge');
+            if (dayBadge) dayBadge.innerText = completedCount >= 21 ? 'FINALIZADO' : ('DIA ' + String(u.day).padStart(2, '0'));
 
             var progText = document.getElementById('prog-text');
             if (progText) progText.innerText = completedCount + ' / 21 dias';
@@ -1152,8 +1662,71 @@
             var progBar = document.getElementById('prog-bar');
             if (progBar) progBar.style.width = pct + '%';
 
+            var statDays = document.getElementById('stat-days');
+            var statStreak = document.getElementById('stat-streak');
+            var statCalories = document.getElementById('stat-calories');
+            var statToday = document.getElementById('stat-today');
+
+            if (statDays) statDays.innerText = completedCount;
+            if (statStreak) statStreak.innerText = getCurrentStreak();
+            if (statCalories) statCalories.innerText = getCompletedCaloriesTotal();
+            if (statToday) statToday.innerText = currentEstimate.totalMinutes + 'm / ' + currentEstimate.totalCalories + 'k';
+        }
+
+        function renderTodaySummary() {
+            var box = document.getElementById('today-summary');
+            if (!box) return;
+
+            var completedCount = Object.keys(u.completedDays || {}).length;
+            var alreadyDoneToday = !TEST_MODE && u.lastCompletedDate === today();
+
+            if (completedCount >= 21) {
+                box.innerHTML = '<div class="today-shell">'
+                    + '<div class="today-top"><div><div class="today-title">Desafio concluido</div><div class="today-copy">Voce completou os 21 dias. Revise seus treinos e mantenha sua rotina ativa.</div></div><span class="today-pill">META BATIDA</span></div>'
+                    + '<button class="btn secondary" onclick="renderDaysGrid()">VER HISTORICO</button>'
+                    + '</div>';
+                return;
+            }
+
+            var estimate = getDayEstimate(u.day);
+            var exerciseList = estimate.exercises.map(function (exercise, index) {
+                return '<div class="today-item"><span class="today-index">' + (index + 1) + '</span><span>' + exercise.name.replace(' - Dia ' + u.day, '') + '</span></div>';
+            }).join('');
+
+            var cta = alreadyDoneToday
+                ? '<button class="btn secondary">AGUARDANDO A LIBERACAO DO PROXIMO DIA</button>'
+                : '<button class="btn" onclick="openWorkout(' + u.day + ')">TREINAR AGORA</button>';
+
+            var pill = alreadyDoneToday ? 'RECUPERACAO' : 'DISPONIVEL';
+            var copy = alreadyDoneToday
+                ? 'Seu treino de hoje ja foi concluido. O proximo dia libera a meia-noite.'
+                : 'Treino planejado com base na sua limitacao atual e no dia do desafio.';
+
+            box.innerHTML = '<div class="today-shell">'
+                + '<div class="today-top"><div><div class="today-title">Dia ' + String(u.day).padStart(2, '0') + ' pronto para voce</div><div class="today-copy">' + copy + '</div></div><span class="today-pill">' + pill + '</span></div>'
+                + '<div class="today-meta">'
+                + '<div class="today-box"><span class="stat-label">Exercicios</span><strong>' + estimate.exercises.length + ' blocos</strong></div>'
+                + '<div class="today-box"><span class="stat-label">Estimativa</span><strong>' + estimate.totalMinutes + ' min / ' + estimate.totalCalories + ' kcal</strong></div>'
+                + '</div>'
+                + '<div class="today-list">' + exerciseList + '</div>'
+                + cta
+                + '</div>';
+        }
+
+        function openDashboard() {
+            console.log('[AIOS:DEV] Abrindo Dashboard...');
+
+            if (!u.completedDays || typeof u.completedDays !== 'object') {
+                u.completedDays = {};
+            }
+
+            ensureStudentProfile(u.email);
+            renderDashboardStats();
+            renderTodaySummary();
+            fillProfileForm();
             renderDaysGrid();
             showScreen('screen-dashboard');
+            switchDashboardTab(currentDashboardTab);
         }
 
         function renderDaysGrid() {
@@ -1168,7 +1741,6 @@
 
                 var isDone = !!u.completedDays[d];
                 var isCurrent = d === u.day;
-                var isFuture = d > u.day;
 
                 var statusText = 'BLOQUEADO';
                 var checkHtml = '';
@@ -1184,20 +1756,20 @@
                     } else {
                         cell.className += ' available';
                         statusText = 'TREINAR';
-                        ; (function (day) {
+                        (function (day) {
                             cell.onclick = function () { openWorkout(day); };
                         })(d);
                     }
                 }
-                // future: stays locked (default)
 
-                cell.innerHTML = checkHtml +
-                    '<div class="day-num">' + (d < 10 ? '0' + d : d) + '</div>' +
-                    '<div class="day-status">' + statusText + '</div>';
+                cell.innerHTML = checkHtml
+                    + '<div class="day-num">' + (d < 10 ? '0' + d : d) + '</div>'
+                    + '<div class="day-status">' + statusText + '</div>';
 
                 grid.appendChild(cell);
             }
         }
+
 
         // ======================================================
         // TREINO UM POR VEZ
