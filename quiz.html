@@ -1,154 +1,309 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avaliação Física | Calistenia Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <title>Avaliacao Inteligente | Calistenia Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #ff4d00;
             --bg: #080808;
-            --card: #141414;
-            --text: #ffffff;
-            --muted: #8a8a8a;
-            --border: #242424;
-            --ok: #00d084;
+            --card: #151515;
+            --card-2: #101010;
+            --text: #f5f5f5;
+            --muted: #a1a1a1;
+            --line: #282828;
+            --primary: #ff5a1f;
+            --primary-soft: rgba(255, 90, 31, 0.12);
+            --ok: #26d07c;
+            --shadow: 0 18px 40px rgba(0, 0, 0, 0.34);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at top, #221005 0%, #080808 52%);
-            color: var(--text);
             min-height: 100vh;
-            padding: 24px;
+            font-family: "Inter", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top, rgba(255, 90, 31, 0.18), transparent 28%),
+                linear-gradient(180deg, #0b0b0b 0%, #080808 100%);
         }
 
-        .wrap {
-            width: 100%;
-            max-width: 720px;
+        .page {
+            width: min(100%, 760px);
             margin: 0 auto;
+            padding: 18px 14px 40px;
         }
+
+        .hero { padding: 12px 4px 20px; }
 
         .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             color: var(--primary);
-            font-size: 0.82rem;
+            font-size: 0.74rem;
             font-weight: 800;
-            letter-spacing: 2px;
+            letter-spacing: 0.18em;
             text-transform: uppercase;
-            margin-bottom: 12px;
-        }
-
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(2rem, 5vw, 3.2rem);
-            line-height: 1.02;
             margin-bottom: 14px;
         }
 
-        .intro {
-            color: var(--muted);
-            line-height: 1.65;
+        .eyebrow::before {
+            content: "";
+            width: 22px;
+            height: 1px;
+            background: rgba(255, 90, 31, 0.7);
+        }
+
+        h1 {
+            font-family: "Orbitron", sans-serif;
+            font-size: clamp(2rem, 8vw, 3.4rem);
+            line-height: 0.96;
+            letter-spacing: -0.04em;
+            margin-bottom: 14px;
+        }
+
+        .lead {
             max-width: 640px;
-            margin-bottom: 28px;
-        }
-
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 24px;
-            margin-bottom: 18px;
-        }
-
-        .q-title {
-            font-size: 1.12rem;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        .q-desc {
             color: var(--muted);
-            font-size: 0.95rem;
-            line-height: 1.55;
-            margin-bottom: 18px;
+            line-height: 1.62;
+            font-size: 0.98rem;
         }
 
-        .options {
+        .proof-bar {
+            margin-top: 18px;
             display: grid;
+            gap: 10px;
+        }
+
+        .proof-item {
+            display: flex;
             gap: 12px;
-        }
-
-        .option {
-            display: block;
-            background: #111;
-            border: 1px solid #262626;
+            align-items: flex-start;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 16px;
-            padding: 16px 18px;
-            cursor: pointer;
-            transition: border-color 0.2s ease, background 0.2s ease;
+            padding: 14px;
         }
 
-        .option:hover {
-            border-color: #4a4a4a;
+        .proof-icon {
+            flex: 0 0 34px;
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-weight: 900;
         }
 
-        .option input {
-            display: none;
-        }
-
-        .option strong {
+        .proof-copy strong {
             display: block;
+            font-size: 0.94rem;
             margin-bottom: 4px;
         }
 
-        .option span {
+        .proof-copy span {
             color: var(--muted);
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+
+        .quiz-shell {
+            display: grid;
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            padding: 18px;
+            box-shadow: var(--shadow);
+        }
+
+        .card-head {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .step {
+            flex: 0 0 38px;
+            width: 38px;
+            height: 38px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-weight: 900;
+            font-size: 0.9rem;
+        }
+
+        .card-title {
+            font-size: 1.08rem;
+            font-weight: 900;
+            line-height: 1.25;
+            margin-bottom: 6px;
+        }
+
+        .card-desc {
+            color: var(--muted);
+            line-height: 1.55;
             font-size: 0.92rem;
+        }
+
+        .grid { display: grid; gap: 12px; }
+
+        .option {
+            display: block;
+            border: 1px solid #303030;
+            border-radius: 18px;
+            background: var(--card-2);
+            padding: 16px;
+            cursor: pointer;
+            transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+            user-select: none;
+        }
+
+        .option:active { transform: scale(0.99); }
+        .option input { display: none; }
+
+        .option-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+
+        .option strong {
+            font-size: 0.98rem;
+            line-height: 1.3;
+        }
+
+        .option span {
+            display: block;
+            color: var(--muted);
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+
+        .indicator {
+            flex: 0 0 22px;
+            width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            border: 1px solid #4a4a4a;
+            background: #121212;
         }
 
         .option.active {
             border-color: var(--primary);
-            background: rgba(255, 77, 0, 0.08);
+            background: linear-gradient(180deg, rgba(255, 90, 31, 0.12), rgba(255, 90, 31, 0.05));
         }
 
-        .multi-grid {
-            display: grid;
-            gap: 12px;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        .option.active .indicator {
+            border-color: var(--primary);
+            background: radial-gradient(circle, var(--primary) 0 48%, transparent 52%);
         }
 
-        .cta {
-            margin-top: 10px;
+        .summary { display: grid; gap: 10px; }
+
+        .summary-box {
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 18px;
+            padding: 14px;
+        }
+
+        .summary-box strong {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .summary-box span {
+            color: var(--muted);
+            font-size: 0.86rem;
+            line-height: 1.5;
+        }
+
+        .cta-wrap {
+            position: sticky;
+            bottom: 0;
+            padding-top: 6px;
+            background: linear-gradient(180deg, rgba(8, 8, 8, 0), rgba(8, 8, 8, 0.92) 28%, rgba(8, 8, 8, 1) 100%);
+        }
+
+        .cta-card {
+            margin-top: 6px;
+            border: 1px solid rgba(255, 90, 31, 0.22);
+            background: linear-gradient(180deg, rgba(255, 90, 31, 0.12), rgba(255, 90, 31, 0.05));
+            border-radius: 22px;
+            padding: 16px;
+        }
+
+        .cta-copy {
+            color: #ffd7c8;
+            font-size: 0.9rem;
+            line-height: 1.45;
+            margin-bottom: 12px;
+        }
+
+        .cta-btn {
             width: 100%;
             border: none;
             border-radius: 18px;
-            padding: 18px 22px;
-            background: var(--primary);
-            color: white;
-            font-size: 1rem;
+            padding: 18px 20px;
+            font: inherit;
             font-weight: 900;
-            letter-spacing: 0.5px;
+            font-size: 1rem;
+            letter-spacing: 0.03em;
+            color: white;
+            background: linear-gradient(135deg, #ff6d35, #ff4f16);
+            box-shadow: 0 18px 30px rgba(255, 90, 31, 0.28);
             cursor: pointer;
-            box-shadow: 0 16px 34px rgba(255, 77, 0, 0.22);
         }
 
-        .helper {
-            margin-top: 12px;
-            color: var(--muted);
-            font-size: 0.9rem;
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+        .cta-note {
             margin-top: 10px;
-            color: var(--ok);
-            font-size: 0.88rem;
-            font-weight: 700;
+            color: #d5d5d5;
+            font-size: 0.84rem;
+            text-align: center;
+        }
+
+        .alert {
+            display: none;
+            margin-top: 12px;
+            color: #ffd4c6;
+            background: rgba(255, 90, 31, 0.12);
+            border: 1px solid rgba(255, 90, 31, 0.24);
+            border-radius: 14px;
+            padding: 12px 14px;
+            font-size: 0.9rem;
+            line-height: 1.45;
+        }
+
+        .alert.visible { display: block; }
+
+        @media (min-width: 768px) {
+            .page { padding: 28px 22px 54px; }
+            .proof-bar { grid-template-columns: repeat(3, 1fr); }
+            .quiz-shell { gap: 18px; }
+            .card { padding: 22px; }
+            .grid.pain-grid { grid-template-columns: repeat(2, 1fr); }
+            .grid.level-grid, .grid.goal-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 
@@ -166,117 +321,233 @@
         fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
-        src="https://www.facebook.com/tr?id=914823934782431&ev=PageView&noscript=1"
-    /></noscript>
+        src="https://www.facebook.com/tr?id=914823934782431&ev=PageView&noscript=1"></noscript>
     <!-- End Meta Pixel Code -->
-
 </head>
 <body>
-    <main class="wrap">
-        <div class="eyebrow">Avaliação Inteligente</div>
-        <h1>Descubra qual versão do desafio combina com o seu corpo</h1>
-        <p class="intro">Antes de entrar no Calistenia Pro, responda esta avaliação rápida. O sistema usa essas respostas para indicar a melhor adaptação dos exercícios conforme dores no ombro, joelho ou lombar.</p>
+    <main class="page">
+        <section class="hero">
+            <div class="eyebrow">avaliacao inteligente</div>
+            <h1>Descubra qual plano faz sentido para o seu corpo hoje</h1>
+            <p class="lead">Responda em menos de 1 minuto. O resultado mostra a versao do Calistenia Pro que melhor combina com seu nivel atual, seu objetivo e suas limitacoes fisicas.</p>
 
-        <section class="card">
-            <div class="q-title">1. Você sente dor ou limitação em alguma região?</div>
-            <div class="q-desc">Selecione todas as opções que se aplicam ao seu caso hoje.</div>
-            <div class="multi-grid" id="pain-grid">
-                <label class="option" data-checkbox>
-                    <input type="checkbox" value="ombro">
-                    <strong>Ombro</strong>
-                    <span>Evitar movimentos que forcem a articulação.</span>
-                </label>
-                <label class="option" data-checkbox>
-                    <input type="checkbox" value="joelho">
-                    <strong>Joelho</strong>
-                    <span>Reduzir impacto e amplitude agressiva.</span>
-                </label>
-                <label class="option" data-checkbox>
-                    <input type="checkbox" value="lombar">
-                    <strong>Lombar</strong>
-                    <span>Controlar carga e proteger a coluna.</span>
-                </label>
-                <label class="option" data-checkbox>
-                    <input type="checkbox" value="none">
-                    <strong>Sem limitações</strong>
-                    <span>Você pode seguir a versão padrão do desafio.</span>
-                </label>
+            <div class="proof-bar">
+                <div class="proof-item">
+                    <div class="proof-icon">01</div>
+                    <div class="proof-copy">
+                        <strong>Mais seguro</strong>
+                        <span>O plano considera ombro, joelho e lombar antes de indicar a melhor rota.</span>
+                    </div>
+                </div>
+                <div class="proof-item">
+                    <div class="proof-icon">02</div>
+                    <div class="proof-copy">
+                        <strong>Mais claro</strong>
+                        <span>Voce entende se precisa da versao padrao ou da versao adaptada antes de comprar.</span>
+                    </div>
+                </div>
+                <div class="proof-item">
+                    <div class="proof-icon">03</div>
+                    <div class="proof-copy">
+                        <strong>Mais rapido</strong>
+                        <span>Sem formulario gigante. Apenas o necessario para recomendar o plano certo.</span>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <section class="card">
-            <div class="q-title">2. Qual é o seu nível hoje?</div>
-            <div class="q-desc">Isso ajuda a comunicar o resultado do seu plano de forma mais certeira.</div>
-            <div class="options" data-radio-group="level">
-                <label class="option active">
-                    <input type="radio" name="level" value="iniciante" checked>
-                    <strong>Iniciante</strong>
-                    <span>Quero começar com segurança e constância.</span>
-                </label>
-                <label class="option">
-                    <input type="radio" name="level" value="intermediario">
-                    <strong>Intermediário</strong>
-                    <span>Já treino um pouco, mas quero um plano melhor estruturado.</span>
-                </label>
-            </div>
+        <section class="quiz-shell">
+            <article class="card">
+                <div class="card-head">
+                    <div class="step">1</div>
+                    <div>
+                        <div class="card-title">Onde voce sente dor, desconforto ou limitacao?</div>
+                        <div class="card-desc">Marque tudo o que se aplica. Se estiver sem dor no momento, selecione a ultima opcao.</div>
+                    </div>
+                </div>
+
+                <div class="grid pain-grid" id="pain-grid">
+                    <label class="option">
+                        <input type="checkbox" value="ombro">
+                        <div class="option-top">
+                            <strong>Ombro</strong>
+                            <span class="indicator"></span>
+                        </div>
+                        <span>Para quem precisa reduzir sobrecarga em empurradas e movimentos acima da linha do ombro.</span>
+                    </label>
+                    <label class="option">
+                        <input type="checkbox" value="joelho">
+                        <div class="option-top">
+                            <strong>Joelho</strong>
+                            <span class="indicator"></span>
+                        </div>
+                        <span>Para quem quer evitar impacto, excesso de amplitude ou progressao agressiva nas pernas.</span>
+                    </label>
+                    <label class="option">
+                        <input type="checkbox" value="lombar">
+                        <div class="option-top">
+                            <strong>Lombar</strong>
+                            <span class="indicator"></span>
+                        </div>
+                        <span>Para quem precisa de mais controle de tronco, tecnica e protecao da coluna.</span>
+                    </label>
+                    <label class="option">
+                        <input type="checkbox" value="none">
+                        <div class="option-top">
+                            <strong>Sem limitacoes hoje</strong>
+                            <span class="indicator"></span>
+                        </div>
+                        <span>Voce pode seguir a versao padrao do desafio com progressao normal.</span>
+                    </label>
+                </div>
+            </article>
+
+            <article class="card">
+                <div class="card-head">
+                    <div class="step">2</div>
+                    <div>
+                        <div class="card-title">Qual e o seu nivel atual?</div>
+                        <div class="card-desc">Isso ajusta a forma como o seu plano sera apresentado no resultado.</div>
+                    </div>
+                </div>
+
+                <div class="grid level-grid" data-radio-group="level">
+                    <label class="option active">
+                        <input type="radio" name="level" value="iniciante" checked>
+                        <div class="option-top">
+                            <strong>Iniciante</strong>
+                            <span class="indicator"></span>
+                        </div>
+                        <span>Quero comecar do jeito certo, sem exagero e com mais constancia.</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="level" value="intermediario">
+                        <div class="option-top">
+                            <strong>Intermediario</strong>
+                            <span class="indicator"></span>
+                        </div>
+                        <span>Ja treino um pouco e quero um plano mais bem organizado para evoluir.</span>
+                    </label>
+                </div>
+            </article>
+
+            <article class="card">
+                <div class="card-head">
+                    <div class="step">3</div>
+                    <div>
+                        <div class="card-title">O que voce mais quer agora?</div>
+                        <div class="card-desc">Sua resposta muda o foco do plano recomendado.</div>
+                    </div>
+                </div>
+
+                <div class="grid goal-grid" data-radio-group="goal">
+                    <label class="option active">
+                        <input type="radio" name="goal" value="comecar" checked>
+                        <div class="option-top">
+                            <strong>Comecar sem me machucar</strong>
+                            <span class="indicator"></span>
+                        </div>
+                        <span>Entrar em rotina, ganhar confianca e seguir um plano mais seguro.</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="goal" value="fortalecer">
+                        <div class="option-top">
+                            <strong>Fortalecer com progressao</strong>
+                            <span class="indicator"></span>
+                        </div>
+                        <span>Quero evoluir com um desafio de 21 dias mais estruturado e consistente.</span>
+                    </label>
+                </div>
+            </article>
+
+            <article class="card">
+                <div class="card-head">
+                    <div class="step">4</div>
+                    <div>
+                        <div class="card-title">O que voce vai receber no resultado</div>
+                        <div class="card-desc">Nao e uma resposta generica. O proximo passo mostra a versao mais coerente com o seu perfil.</div>
+                    </div>
+                </div>
+
+                <div class="summary">
+                    <div class="summary-box">
+                        <strong>Versao do desafio recomendada</strong>
+                        <span>Padrao ou adaptada para ombro, joelho e lombar.</span>
+                    </div>
+                    <div class="summary-box">
+                        <strong>Enquadramento do seu momento atual</strong>
+                        <span>Inicio seguro ou foco em fortalecimento com progressao.</span>
+                    </div>
+                    <div class="summary-box">
+                        <strong>Oferta certa para o seu perfil</strong>
+                        <span>Com uma pagina de plano que faz sentido com o que voce acabou de responder.</span>
+                    </div>
+                </div>
+
+                <div id="quiz-alert" class="alert"></div>
+            </article>
         </section>
 
-        <section class="card">
-            <div class="q-title">3. O que você mais quer agora?</div>
-            <div class="q-desc">Isso melhora o enquadramento do resultado e a comunicação da oferta.</div>
-            <div class="options" data-radio-group="goal">
-                <label class="option active">
-                    <input type="radio" name="goal" value="comecar" checked>
-                    <strong>Começar a treinar sem me machucar</strong>
-                    <span>Entrar em rotina e ganhar consistência.</span>
-                </label>
-                <label class="option">
-                    <input type="radio" name="goal" value="fortalecer">
-                    <strong>Fortalecer o corpo com progressão</strong>
-                    <span>Ganhar evolução com um plano de 21 dias.</span>
-                </label>
+        <div class="cta-wrap">
+            <div class="cta-card">
+                <p class="cta-copy">Seu resultado fica pronto agora e mostra a rota ideal para voce entrar no Calistenia Pro com mais seguranca e mais clareza.</p>
+                <button class="cta-btn" id="quiz-submit">VER MEU PLANO RECOMENDADO</button>
+                <p class="cta-note">Resultado imediato, sem cadastro nesta etapa.</p>
             </div>
-
-            <button class="cta" id="quiz-submit">VER MEU PLANO RECOMENDADO</button>
-            <div class="badge">✓ Resultado adaptado para o seu perfil</div>
-            <p class="helper">Ao continuar, você verá qual versão do Calistenia Pro faz mais sentido para sua situação atual.</p>
-        </section>
+        </div>
     </main>
 
     <script>
         function syncOptionStates(scope) {
-            (scope || document).querySelectorAll('.option').forEach(function (el) {
-                var input = el.querySelector('input');
+            (scope || document).querySelectorAll('.option').forEach(function (element) {
+                var input = element.querySelector('input');
                 if (!input) return;
-                el.classList.toggle('active', !!input.checked);
+                element.classList.toggle('active', !!input.checked);
             });
         }
 
+        function showAlert(message) {
+            var alertBox = document.getElementById('quiz-alert');
+            alertBox.textContent = message;
+            alertBox.classList.add('visible');
+        }
+
+        function clearAlert() {
+            document.getElementById('quiz-alert').classList.remove('visible');
+        }
+
         document.querySelectorAll('[data-radio-group]').forEach(function (group) {
-            group.addEventListener('change', function () { syncOptionStates(group); });
+            group.addEventListener('change', function () {
+                syncOptionStates(group);
+                clearAlert();
+            });
         });
 
         document.getElementById('pain-grid').addEventListener('change', function (event) {
             var target = event.target;
             if (target.value === 'none' && target.checked) {
-                document.querySelectorAll('#pain-grid input[type="checkbox"]').forEach(function (cb) {
-                    if (cb.value !== 'none') cb.checked = false;
+                document.querySelectorAll('#pain-grid input[type="checkbox"]').forEach(function (checkbox) {
+                    if (checkbox.value !== 'none') checkbox.checked = false;
                 });
             } else if (target.value !== 'none' && target.checked) {
-                var noPain = document.querySelector('#pain-grid input[value="none"]');
-                if (noPain) noPain.checked = false;
+                var noneOption = document.querySelector('#pain-grid input[value="none"]');
+                if (noneOption) noneOption.checked = false;
             }
+
             syncOptionStates(document.getElementById('pain-grid'));
+            clearAlert();
         });
 
         syncOptionStates(document);
-
         fbq('track', 'ViewContent', { content_name: 'Quiz Calistenia Pro' });
 
         document.getElementById('quiz-submit').addEventListener('click', function () {
-            var pains = Array.from(document.querySelectorAll('#pain-grid input:checked')).map(function (input) { return input.value; });
+            var pains = Array.from(document.querySelectorAll('#pain-grid input:checked')).map(function (input) {
+                return input.value;
+            });
+
             if (!pains.length) {
-                alert('Selecione pelo menos uma opção na avaliação física.');
+                showAlert('Selecione pelo menos uma opcao na parte de dores ou limitacoes antes de continuar.');
                 return;
             }
 
