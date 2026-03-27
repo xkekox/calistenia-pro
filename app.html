@@ -938,11 +938,53 @@
         var tempRestrictions = [];
         var supabaseClient = null;
         var cloudEnabled = false;
+        var quizPrefillApplied = false;
 
         // ======================================================
         // UTILITARIOS
         // ======================================================
         function today() { return new Date().toLocaleDateString('pt-BR'); }
+
+        function getQuizResult() {
+            try {
+                var raw = localStorage.getItem('calpro_quiz_result');
+                if (!raw) return null;
+                var parsed = JSON.parse(raw);
+                if (!parsed || typeof parsed !== 'object') return null;
+                return {
+                    pains: Array.isArray(parsed.pains) ? parsed.pains : [],
+                    level: parsed.level || 'iniciante',
+                    goal: parsed.goal || 'comecar'
+                };
+            } catch (e) {
+                console.warn('[AIOS:DEV] Falha ao ler resultado do quiz.', e);
+                return null;
+            }
+        }
+
+        function getQuizGoalLabel(goal) {
+            return goal === 'fortalecer' ? 'Fortalecer com progressao' : 'Comecar sem me machucar';
+        }
+
+        function applyQuizPrefill() {
+            if (quizPrefillApplied || u.assessmentDone) return false;
+            var quiz = getQuizResult();
+            if (!quiz) return false;
+
+            u.restrictions = Array.isArray(quiz.pains) ? quiz.pains.slice() : [];
+            u.assessmentDone = true;
+            tempRestrictions = u.restrictions.slice();
+
+            ensureStudentProfile(u.email);
+            if (!studentProfile.goal || studentProfile.goal === 'Criar rotina em casa') {
+                studentProfile.goal = getQuizGoalLabel(quiz.goal);
+                saveStudentProfile();
+            }
+
+            quizPrefillApplied = true;
+            save();
+            return true;
+        }
 
         function blankUser(email, userId) {
             return {
@@ -1375,6 +1417,7 @@
             }
 
             setAuthStatus('');
+            applyQuizPrefill();
             if (u.assessmentDone) {
                 openDashboard();
             } else {
@@ -1402,6 +1445,7 @@
             if (!loadLocal(TEST_EMAIL)) {
                 u = blankUser(TEST_EMAIL, 'test-user');
             }
+            applyQuizPrefill();
             if (u.assessmentDone) {
                 openDashboard();
             } else {
@@ -1460,6 +1504,7 @@
             if (loadLocal(e)) {
                 console.log('[AIOS:DEV] Usuario carregado com sucesso.');
                 if (authName) syncStudentProfileName(authName);
+                applyQuizPrefill();
                 if (u.assessmentDone) {
                     openDashboard();
                 } else {
@@ -1469,7 +1514,11 @@
                 console.log('[AIOS:DEV] Novo usuario detectado ou erro no load. Iniciando avaliacao.');
                 u = blankUser(e, '');
                 if (authName) syncStudentProfileName(authName);
-                showScreen('screen-assessment');
+                if (applyQuizPrefill()) {
+                    openDashboard();
+                } else {
+                    showScreen('screen-assessment');
+                }
             }
         }
 
@@ -2043,6 +2092,5 @@
 </body>
 
 </html>
-
 
 
