@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seu Plano Recomendado | Calistenia Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;700;900&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --primary: #ff4d00;
@@ -16,7 +19,11 @@
             --ok: #00d084;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -163,32 +170,98 @@
             color: #7d7d7d;
             font-size: 0.88rem;
         }
+
+        .timer-box {
+            background: rgba(255, 77, 0, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 12px 16px;
+            text-align: center;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .timer-text {
+            color: #ffbba1;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .timer-value {
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+
+        .price-anchor {
+            margin: 20px 0;
+            padding: 20px;
+            background: #1a0a04;
+            border-radius: 16px;
+            border: 1px dashed #4a1905;
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .price-item.strike {
+            color: var(--muted);
+            text-decoration: line-through;
+        }
+
+        .price-item.highlight {
+            color: var(--ok);
+            font-size: 1.1rem;
+            font-weight: 900;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid #331509;
+        }
     </style>
 
     <!-- Meta Pixel Code -->
     <script>
-        !function(f,b,e,v,n,t,s)
-        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window, document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
         fbq('init', '914823934782431');
         fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
-        src="https://www.facebook.com/tr?id=914823934782431&ev=PageView&noscript=1"
-    /></noscript>
+            src="https://www.facebook.com/tr?id=914823934782431&ev=PageView&noscript=1" /></noscript>
     <!-- End Meta Pixel Code -->
 
 </head>
+
 <body>
     <main class="wrap">
-        <div class="eyebrow">Plano Recomendado</div>
+        <div class="eyebrow">Plano Recomendado GERADO</div>
         <h1 id="headline">Seu corpo pede uma versão mais segura do desafio</h1>
-        <p class="lead" id="lead">Com base na sua avaliação, o sistema do Calistenia Pro recomenda a adaptação certa para você começar com segurança e constância.</p>
+
+        <div class="timer-box">
+            <span class="timer-text">Atenção! Seu acesso seguro será apagado em:</span>
+            <span class="timer-value" id="countdown">15:00</span>
+        </div>
+
+        <p class="lead" id="lead">Com base na sua avaliação, o sistema do Calistenia Pro recomenda a adaptação certa.
+            Devido à alta demanda do servidor, seguramos sua vaga estruturada por apenas 15 minutos.</p>
 
         <section class="card">
             <div class="result-badge">✓ Resultado baseado na sua avaliação</div>
@@ -202,7 +275,8 @@
             <div class="list">
                 <div class="item">
                     <strong>Treino ajustado às suas dores</strong>
-                    <span>O sistema escolhe versões específicas de exercícios para ombro, joelho e lombar quando necessário.</span>
+                    <span>O sistema escolhe versões específicas de exercícios para ombro, joelho e lombar quando
+                        necessário.</span>
                 </div>
                 <div class="item">
                     <strong>Progressão de 21 dias</strong>
@@ -214,8 +288,24 @@
                 </div>
             </div>
 
+            <div class="price-anchor">
+                <div class="price-item strike">
+                    <span>Personal + Academia</span>
+                    <span>R$ 350,00</span>
+                </div>
+                <div class="price-item strike">
+                    <span>Assessorias Genéricas</span>
+                    <span>R$ 130,00</span>
+                </div>
+                <div class="price-item highlight">
+                    <span>Calistenia Pro (Seu Plano Oficial)</span>
+                    <span>R$ 29,90 hoje</span>
+                </div>
+            </div>
+
             <div class="actions">
-                <a class="btn btn-primary" id="checkout-btn" href="https://go.hotmart.com/V105066772S?dp=1">QUERO LIBERAR MEU ACESSO AGORA</a>
+                <a class="btn btn-primary" id="checkout-btn" href="https://go.hotmart.com/V105066772S?dp=1">QUERO
+                    LIBERAR MEU ACESSO AGORA</a>
                 <a class="btn btn-secondary" href="quiz.html">REFZER A AVALIAÇÃO</a>
             </div>
             <p class="small">Oferta de entrada por R$ 29,90 com acesso imediato ao desafio.</p>
@@ -276,6 +366,23 @@
         chipLevel.className = 'chip';
         chipLevel.innerText = data.level === 'iniciante' ? 'Perfil iniciante' : 'Perfil intermediário';
         chips.appendChild(chipLevel);
+
+        // Timer Logic (Escassez CRO)
+        var timeInSecs = 15 * 60;
+        var display = document.querySelector('#countdown');
+        function startTimer() {
+            var timer = timeInSecs, minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+                display.textContent = minutes + ":" + seconds;
+                if (--timer < 0) { timer = 0; }
+            }, 1000);
+        }
+        startTimer();
     </script>
 </body>
+
 </html>
