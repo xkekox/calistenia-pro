@@ -1,23 +1,322 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calistenia Pro | Desafio 21 Dias</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #ff4d00; --bg: #050505; --card: #111; --text: #fff; }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
-        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: radial-gradient(circle at center, #1a0a00 0%, #050505 100%); padding: 20px; }
-        h1 { font-family: 'Orbitron', sans-serif; font-size: 3.5rem; text-transform: uppercase; letter-spacing: 5px; margin-bottom: 20px; }
-        h1 span { color: var(--primary); text-shadow: 0 0 20px rgba(255,77,0,0.5); }
-        p.tagline { font-size: 1.2rem; color: #888; max-width: 600px; margin-bottom: 40px; }
-        .cta { background: var(--primary); color: #fff; padding: 20px 50px; border-radius: 50px; font-weight: 900; text-decoration: none; font-size: 1.2rem; transition: 0.3s; box-shadow: 0 10px 30px rgba(255,77,0,0.3); }
-        .cta:hover { transform: scale(1.05); box-shadow: 0 15px 40px rgba(255,77,0,0.5); }
-        .features { padding: 100px 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
-        .f-card { background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid #222; }
-        .f-card h3 { color: var(--primary); margin-bottom: 15px; font-family: 'Orbitron', sans-serif; }
+        :root {
+            --bg: #080808;
+            --surface: #141414;
+            --surface-2: #101010;
+            --text: #f5f5f5;
+            --muted: #a4a4a4;
+            --line: #252525;
+            --primary: #ff5a1f;
+            --primary-soft: rgba(255, 90, 31, 0.12);
+            --ok: #26d07c;
+            --shadow: 0 24px 44px rgba(0, 0, 0, 0.34);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            min-height: 100vh;
+            font-family: "Inter", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top, rgba(255, 90, 31, 0.18), transparent 28%),
+                linear-gradient(180deg, #0b0b0b 0%, #080808 100%);
+        }
+
+        .page {
+            width: min(100%, 1080px);
+            margin: 0 auto;
+            padding: 16px 14px 40px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 8px 2px 16px;
+        }
+
+        .brand {
+            font-family: "Orbitron", sans-serif;
+            font-size: 0.92rem;
+            letter-spacing: 0.18em;
+            color: var(--primary);
+        }
+
+        .student-link {
+            color: #d5d5d5;
+            text-decoration: none;
+            font-size: 0.84rem;
+        }
+
+        .hero {
+            display: grid;
+            gap: 16px;
+            padding: 16px 0 10px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            font-size: 0.74rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 22px;
+            height: 1px;
+            background: rgba(255, 90, 31, 0.74);
+        }
+
+        h1 {
+            font-family: "Orbitron", sans-serif;
+            font-size: clamp(2.2rem, 10vw, 4.8rem);
+            line-height: 0.92;
+            letter-spacing: -0.05em;
+            margin-top: 10px;
+        }
+
+        .hero-copy {
+            color: var(--muted);
+            font-size: 1rem;
+            line-height: 1.68;
+            max-width: 640px;
+        }
+
+        .hero-stack {
+            display: grid;
+            gap: 12px;
+        }
+
+        .pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            min-height: 38px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.03);
+            font-size: 0.84rem;
+            color: #e2e2e2;
+        }
+
+        .hero-cta {
+            display: grid;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .btn {
+            display: inline-flex;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 18px;
+            padding: 18px 20px;
+            font-weight: 900;
+            font-size: 1rem;
+            letter-spacing: 0.03em;
+        }
+
+        .btn-primary {
+            color: white;
+            background: linear-gradient(135deg, #ff6d35, #ff4f16);
+            box-shadow: 0 18px 30px rgba(255, 90, 31, 0.28);
+        }
+
+        .btn-secondary {
+            color: #ddd;
+            background: #121212;
+            border: 1px solid #2b2b2b;
+        }
+
+        .hero-note {
+            color: #d0d0d0;
+            font-size: 0.84rem;
+            line-height: 1.45;
+        }
+
+        .hero-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+            border: 1px solid var(--line);
+            border-radius: 26px;
+            padding: 18px;
+            box-shadow: var(--shadow);
+        }
+
+        .hero-card-title {
+            font-size: 1rem;
+            font-weight: 900;
+            margin-bottom: 6px;
+        }
+
+        .hero-card-copy {
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.55;
+            margin-bottom: 14px;
+        }
+
+        .mini-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .mini-item {
+            border-radius: 16px;
+            background: var(--surface-2);
+            border: 1px solid #232323;
+            padding: 13px 14px;
+        }
+
+        .mini-item strong {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .mini-item span {
+            color: var(--muted);
+            font-size: 0.84rem;
+            line-height: 1.45;
+        }
+
+        .section {
+            margin-top: 16px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            padding: 18px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 1.22rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .section-copy {
+            color: var(--muted);
+            font-size: 0.94rem;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .feature {
+            background: var(--surface-2);
+            border: 1px solid #232323;
+            border-radius: 18px;
+            padding: 15px;
+        }
+
+        .feature strong {
+            display: block;
+            font-size: 0.96rem;
+            margin-bottom: 5px;
+        }
+
+        .feature span {
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.52;
+        }
+
+        .price-card {
+            border-color: rgba(255, 90, 31, 0.22);
+            background: linear-gradient(180deg, rgba(255, 90, 31, 0.11), rgba(255, 90, 31, 0.04));
+        }
+
+        .price-line {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .price-box {
+            background: #101010;
+            border: 1px solid #232323;
+            border-radius: 18px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .price-label {
+            color: var(--muted);
+            font-size: 0.74rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 8px;
+        }
+
+        .price-value {
+            font-size: 1.54rem;
+            font-weight: 900;
+        }
+
+        .price-box.old .price-value {
+            color: #666;
+            text-decoration: line-through;
+        }
+
+        .price-sub {
+            color: #8a8a8a;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .footer {
+            margin-top: 18px;
+            text-align: center;
+            color: #7d7d7d;
+            font-size: 0.82rem;
+            line-height: 1.5;
+            padding-bottom: 28px;
+        }
+
+        @media (min-width: 860px) {
+            .page { padding: 24px 22px 52px; }
+            .hero { grid-template-columns: 1.1fr 0.9fr; align-items: center; gap: 22px; }
+            .hero-cta { grid-template-columns: 1fr 1fr; }
+            .grid.three { grid-template-columns: repeat(3, 1fr); }
+            .grid.two { grid-template-columns: repeat(2, 1fr); }
+            .price-line { grid-template-columns: repeat(2, 1fr); display: grid; }
+        }
     </style>
 
     <!-- Meta Pixel Code -->
@@ -34,27 +333,122 @@
         fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
-        src="https://www.facebook.com/tr?id=914823934782431&ev=PageView&noscript=1"
-    /></noscript>
+        src="https://www.facebook.com/tr?id=914823934782431&ev=PageView&noscript=1"></noscript>
     <!-- End Meta Pixel Code -->
-
 </head>
 <body>
-    <section class="hero">
-        <p style="color:var(--primary); font-weight:bold; letter-spacing:3px; margin-bottom:10px;">PREMIUM WORKOUT</p>
-        <h1>CALISTENIA <span>PRO</span></h1>
-        <p class="tagline">O único sistema de 21 dias que adapta os exercícios às suas dores e limitações físicas automaticamente.</p>
-        <a href="quiz.html" class="cta">FAZER AVALIAÇÃO AGORA</a>
-        <p style="margin-top:20px; font-size:0.8rem; color:#444;">Acesso por apenas R$ 29,90</p>
-    </section>
-    <section class="features">
-        <div class="f-card"><h3>Algoritmo de Proteção</h3><p>O sistema filtra exercícios de impacto se você tiver dores no ombro, joelho ou lombar.</p></div>
-        <div class="f-card"><h3>Vídeos em 4K</h3><p>Cada exercício possui uma demonstração em vídeo para execução perfeita.</p></div>
-        <div class="f-card"><h3>Progressão Diária</h3><p>Novos desafios liberados a cada 24 horas para garantir sua constância.</p></div>
-    </section>
-    <footer style="text-align:center; padding:50px; color:#333; font-size:0.8rem; border-top:1px solid #111;">
-        &copy; 2026 CALISTENIA PRO ELITE. <a href="app.html" style="color:#555;">ÁREA DO ALUNO</a>
-    </footer>
+    <main class="page">
+        <header class="topbar">
+            <div class="brand">CALISTENIA PRO</div>
+            <a class="student-link" href="app.html">AREA DO ALUNO</a>
+        </header>
+
+        <section class="hero">
+            <div class="hero-stack">
+                <div class="eyebrow">desafio 21 dias em casa</div>
+                <h1>Treine com seguranca mesmo se voce tem dor ou limitacao</h1>
+                <p class="hero-copy">O Calistenia Pro foi pensado para quem quer sair da estagnacao e entrar em rotina sem depender de academia. Antes de comprar, voce faz uma avaliacao rapida e ve qual versao do plano combina com seu corpo hoje.</p>
+
+                <div class="pill-row">
+                    <span class="pill">ombro</span>
+                    <span class="pill">joelho</span>
+                    <span class="pill">lombar</span>
+                    <span class="pill">treino em casa</span>
+                </div>
+
+                <div class="hero-cta">
+                    <a class="btn btn-primary" href="quiz.html">FAZER AVALIACAO AGORA</a>
+                    <a class="btn btn-secondary" href="app.html">JA SOU ALUNO</a>
+                </div>
+                <p class="hero-note">Avaliacao rapida, resultado imediato e acesso por apenas R$ 29,90 no plano recomendado.</p>
+            </div>
+
+            <aside class="hero-card">
+                <div class="hero-card-title">O que voce descobre antes de entrar</div>
+                <p class="hero-card-copy">Em vez de cair num produto generico, voce responde o quiz e recebe uma rota mais coerente com seu nivel, seu objetivo e sua condicao fisica atual.</p>
+                <div class="mini-list">
+                    <div class="mini-item">
+                        <strong>Versao certa do desafio</strong>
+                        <span>Padrao ou adaptada para quem precisa proteger determinadas regioes.</span>
+                    </div>
+                    <div class="mini-item">
+                        <strong>Enquadramento do seu momento</strong>
+                        <span>Comecar sem se machucar ou fortalecer com progressao.</span>
+                    </div>
+                    <div class="mini-item">
+                        <strong>Compra com mais clareza</strong>
+                        <span>Voce entende antes se o app faz sentido para o seu caso.</span>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <section class="section">
+            <article class="card">
+                <div class="section-title">Por que esse funil converte melhor</div>
+                <p class="section-copy">A promessa nao para na landing. O usuario sai daqui, responde a avaliacao e chega numa tela de plano recomendando a versao do desafio que faz mais sentido para o perfil dele.</p>
+                <div class="grid three">
+                    <div class="feature">
+                        <strong>Menos objeção</strong>
+                        <span>Quem tem medo de se machucar entende que existe uma versao adaptada.</span>
+                    </div>
+                    <div class="feature">
+                        <strong>Mais contexto</strong>
+                        <span>O plano recomendado usa dor, nivel e objetivo antes do checkout.</span>
+                    </div>
+                    <div class="feature">
+                        <strong>Mais percepcao de valor</strong>
+                        <span>O produto deixa de parecer um treino qualquer e vira uma rota mais dirigida.</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="card">
+                <div class="section-title">O que voce recebe no app</div>
+                <p class="section-copy">Depois da compra, o aluno entra na area de membros, confirma a avaliacao e acompanha a progressao dos 21 dias direto do celular.</p>
+                <div class="grid two">
+                    <div class="feature">
+                        <strong>Treino diario organizado</strong>
+                        <span>O app libera a jornada dia por dia para evitar exagero e melhorar constancia.</span>
+                    </div>
+                    <div class="feature">
+                        <strong>Adaptacao por restricao</strong>
+                        <span>O sistema escolhe variacoes mais seguras para ombro, joelho e lombar.</span>
+                    </div>
+                    <div class="feature">
+                        <strong>Execucao simples no celular</strong>
+                        <span>Tela leve, navegação direta e foco total em consumo mobile.</span>
+                    </div>
+                    <div class="feature">
+                        <strong>Acesso imediato</strong>
+                        <span>Comprou, entrou com o email e ja consegue seguir para o plano certo.</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="card price-card">
+                <div class="section-title">Entrada simples, risco baixo</div>
+                <p class="section-copy">Se comparado a personal, academia e tentativa no improviso, o custo de entrada e baixo e o ganho de clareza e muito maior.</p>
+                <div class="price-line">
+                    <div class="price-box old">
+                        <div class="price-label">personal ou academia</div>
+                        <div class="price-value">R$ 350</div>
+                        <div class="price-sub">por mes</div>
+                    </div>
+                    <div class="price-box">
+                        <div class="price-label">calistenia pro</div>
+                        <div class="price-value">R$ 29,90</div>
+                        <div class="price-sub">pagamento unico</div>
+                    </div>
+                </div>
+                <a class="btn btn-primary" href="quiz.html">QUERO VER MEU PLANO RECOMENDADO</a>
+            </article>
+        </section>
+
+        <footer class="footer">
+            &copy; 2026 Calistenia Pro. Funil principal: landing -> quiz -> plano -> checkout -> app.
+        </footer>
+    </main>
     <script>
         fbq('track', 'ViewContent', { content_name: 'Landing Calistenia Pro' });
     </script>
