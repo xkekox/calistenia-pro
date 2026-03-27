@@ -173,6 +173,24 @@
             line-height: 1.45;
         }
 
+        .entry-note {
+            margin-bottom: 14px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 77, 0, 0.18);
+            background: rgba(255, 77, 0, 0.08);
+            color: #ffd4c4;
+            font-size: 0.84rem;
+            line-height: 1.5;
+        }
+
+        .entry-note strong {
+            display: block;
+            color: #fff;
+            margin-bottom: 4px;
+            font-size: 0.86rem;
+        }
+
         /* ASSESSMENT â€” checkboxes */
         .restriction-grid {
             display: grid;
@@ -749,6 +767,10 @@
         <div class="card" style="margin-top: 40px;">
             <p class="card-title">Acesso ao Desafio</p>
             <p class="auth-note">Use o mesmo e-mail da compra. No primeiro acesso, informe seu nome e crie sua senha. Depois, entre sempre com e-mail e senha.</p>
+            <div id="quiz-entry-note" class="entry-note" style="display:none;">
+                <strong>Seu quiz foi identificado neste aparelho</strong>
+                Se voce acabou de sair da avaliacao, o app pode reaproveitar suas respostas no primeiro acesso.
+            </div>
             <input type="text" id="full-name" placeholder="Seu nome completo">
             <input type="email" id="email" placeholder="seuemail@gmail.com">
             <input type="password" id="password" placeholder="Sua senha de acesso">
@@ -964,6 +986,12 @@
 
         function getQuizGoalLabel(goal) {
             return goal === 'fortalecer' ? 'Fortalecer com progressao' : 'Comecar sem me machucar';
+        }
+
+        function renderQuizEntryNote() {
+            var note = document.getElementById('quiz-entry-note');
+            if (!note) return;
+            note.style.display = getQuizResult() ? 'block' : 'none';
         }
 
         function applyQuizPrefill() {
@@ -2048,6 +2076,7 @@
         }
 
         window.addEventListener('DOMContentLoaded', async function () {
+            renderQuizEntryNote();
             if (TEST_MODE) {
                 bootstrapTestMode();
                 return;
@@ -2092,5 +2121,4 @@
 </body>
 
 </html>
-
 
