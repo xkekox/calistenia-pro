@@ -1,230 +1,270 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seu Plano Recomendado | Calistenia Pro</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;700;900&display=swap"
-        rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #ff4d00;
             --bg: #080808;
-            --card: #141414;
-            --text: #fff;
-            --muted: #8c8c8c;
-            --border: #252525;
-            --ok: #00d084;
+            --card: #151515;
+            --card-2: #101010;
+            --text: #f6f6f6;
+            --muted: #a8a8a8;
+            --line: #2a2a2a;
+            --primary: #ff5a1f;
+            --ok: #26d07c;
+            --shadow: 0 20px 42px rgba(0, 0, 0, 0.34);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at top, #221005 0%, #080808 52%);
-            color: var(--text);
             min-height: 100vh;
-            padding: 24px;
+            font-family: "Inter", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top, rgba(255, 90, 31, 0.18), transparent 28%),
+                linear-gradient(180deg, #0b0b0b 0%, #080808 100%);
         }
 
-        .wrap {
-            max-width: 760px;
+        .page {
+            width: min(100%, 820px);
             margin: 0 auto;
+            padding: 18px 14px 44px;
         }
+
+        .hero { padding: 10px 2px 18px; }
 
         .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             color: var(--primary);
-            font-size: 0.8rem;
-            font-weight: 800;
-            letter-spacing: 2px;
+            font-size: 0.74rem;
+            font-weight: 900;
+            letter-spacing: 0.18em;
             text-transform: uppercase;
             margin-bottom: 12px;
         }
 
+        .eyebrow::before {
+            content: "";
+            width: 22px;
+            height: 1px;
+            background: rgba(255, 90, 31, 0.74);
+        }
+
         h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(2rem, 5vw, 3.3rem);
-            line-height: 1.02;
+            font-family: "Orbitron", sans-serif;
+            font-size: clamp(2rem, 8vw, 3.4rem);
+            line-height: 0.96;
+            letter-spacing: -0.04em;
             margin-bottom: 14px;
         }
 
         .lead {
             color: var(--muted);
-            line-height: 1.65;
-            margin-bottom: 26px;
-            max-width: 660px;
+            font-size: 0.98rem;
+            line-height: 1.64;
+            max-width: 680px;
+        }
+
+        .stack {
+            display: grid;
+            gap: 14px;
+            margin-top: 18px;
         }
 
         .card {
-            background: var(--card);
-            border: 1px solid var(--border);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+            border: 1px solid var(--line);
             border-radius: 24px;
-            padding: 26px;
-            margin-bottom: 18px;
+            padding: 18px;
+            box-shadow: var(--shadow);
         }
 
-        .result-badge {
+        .badge {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 9px 14px;
+            padding: 9px 13px;
             border-radius: 999px;
-            background: rgba(0, 208, 132, 0.09);
+            background: rgba(38, 208, 124, 0.12);
             color: var(--ok);
-            font-size: 0.88rem;
+            font-size: 0.82rem;
             font-weight: 800;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
-        .plan-title {
-            font-size: 1.35rem;
+        .section-title {
+            font-size: 1.2rem;
             font-weight: 900;
-            margin-bottom: 10px;
+            line-height: 1.2;
+            margin-bottom: 8px;
         }
 
-        .plan-text {
+        .section-copy {
             color: var(--muted);
-            line-height: 1.65;
-            margin-bottom: 16px;
+            line-height: 1.62;
+            font-size: 0.94rem;
         }
 
         .chips {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-bottom: 8px;
+            margin-top: 16px;
         }
 
         .chip {
+            display: inline-flex;
+            align-items: center;
+            min-height: 38px;
             padding: 10px 14px;
             border-radius: 999px;
             background: #101010;
-            border: 1px solid #232323;
-            font-size: 0.88rem;
-            color: #d6d6d6;
+            border: 1px solid #2a2a2a;
+            color: #e3e3e3;
+            font-size: 0.86rem;
+            line-height: 1.2;
         }
 
-        .list {
-            display: grid;
-            gap: 12px;
-            margin-top: 8px;
+        .grid { display: grid; gap: 12px; }
+
+        .insight {
+            background: var(--card-2);
+            border: 1px solid #222;
+            border-radius: 18px;
+            padding: 15px;
         }
 
-        .item {
-            background: #101010;
-            border: 1px solid #202020;
-            border-radius: 16px;
-            padding: 14px 16px;
-        }
-
-        .item strong {
+        .insight strong {
             display: block;
             margin-bottom: 5px;
+            font-size: 0.96rem;
         }
 
-        .item span {
+        .insight span {
             color: var(--muted);
-            line-height: 1.55;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            line-height: 1.52;
         }
 
-        .actions {
-            display: grid;
-            gap: 12px;
-            margin-top: 18px;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            text-align: center;
-            padding: 18px 22px;
-            border-radius: 16px;
-            text-decoration: none;
-            font-weight: 900;
-            letter-spacing: 0.4px;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 16px 32px rgba(255, 77, 0, 0.23);
-        }
-
-        .btn-secondary {
-            background: #1a1a1a;
-            color: #ddd;
-            border: 1px solid #2b2b2b;
-        }
-
-        .small {
-            margin-top: 14px;
-            color: #7d7d7d;
-            font-size: 0.88rem;
+        .offer-card {
+            border-color: rgba(255, 90, 31, 0.22);
+            background: linear-gradient(180deg, rgba(255, 90, 31, 0.11), rgba(255, 90, 31, 0.04));
         }
 
         .timer-box {
-            background: rgba(255, 77, 0, 0.1);
-            border: 1px solid var(--primary);
-            border-radius: 12px;
-            padding: 12px 16px;
             text-align: center;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            border: 1px solid rgba(255, 90, 31, 0.24);
+            border-radius: 18px;
+            background: rgba(255, 90, 31, 0.08);
+            padding: 14px;
+            margin-bottom: 16px;
+            color: #ffd7c8;
+            line-height: 1.45;
+            font-size: 0.92rem;
         }
 
-        .timer-text {
-            color: #ffbba1;
-            font-weight: 700;
-            font-size: 0.95rem;
-        }
-
-        .timer-value {
+        .timer-box strong {
+            display: block;
+            margin-top: 4px;
             color: var(--primary);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.4rem;
-            font-weight: 900;
-            letter-spacing: 2px;
+            font-family: "Orbitron", sans-serif;
+            font-size: 1.18rem;
+            letter-spacing: 0.08em;
         }
 
-        .price-anchor {
-            margin: 20px 0;
-            padding: 20px;
-            background: #1a0a04;
-            border-radius: 16px;
-            border: 1px dashed #4a1905;
+        .prices {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 16px;
         }
 
-        .price-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 0.95rem;
+        .price-box {
+            border-radius: 18px;
+            padding: 16px;
+            background: #101010;
+            border: 1px solid #222;
+            text-align: center;
         }
 
-        .price-item.strike {
+        .price-box.highlight {
+            border-color: rgba(255, 90, 31, 0.5);
+            background: linear-gradient(180deg, rgba(255, 90, 31, 0.12), rgba(255, 90, 31, 0.05));
+        }
+
+        .price-label {
             color: var(--muted);
+            font-size: 0.74rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 8px;
+        }
+
+        .price-value {
+            font-size: 1.48rem;
+            font-weight: 900;
+        }
+
+        .price-box:not(.highlight) .price-value {
+            color: #666;
             text-decoration: line-through;
         }
 
-        .price-item.highlight {
-            color: var(--ok);
-            font-size: 1.1rem;
+        .price-sub {
+            color: #8a8a8a;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 18px;
+            padding: 18px 20px;
             font-weight: 900;
-            margin-top: 14px;
-            padding-top: 14px;
-            border-top: 1px solid #331509;
+            font-size: 1rem;
+            letter-spacing: 0.03em;
+            color: white;
+            background: linear-gradient(135deg, #ff6d35, #ff4f16);
+            box-shadow: 0 18px 30px rgba(255, 90, 31, 0.28);
+        }
+
+        .cta-sub {
+            margin-top: 10px;
+            color: #dfdfdf;
+            font-size: 0.84rem;
+            text-align: center;
+            line-height: 1.45;
+        }
+
+        .link-row {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .back-link {
+            color: #b7b7b7;
+            font-size: 0.88rem;
+            text-decoration: none;
+        }
+
+        @media (min-width: 768px) {
+            .page { padding: 28px 22px 52px; }
+            .card { padding: 22px; }
+            .grid.two { grid-template-columns: repeat(2, 1fr); }
+            .prices { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 
@@ -245,70 +285,60 @@
         fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
-            src="https://www.facebook.com/tr?id=914823934782431&ev=PageView&noscript=1" /></noscript>
+        src="https://www.facebook.com/tr?id=914823934782431&ev=PageView&noscript=1"></noscript>
     <!-- End Meta Pixel Code -->
-
 </head>
-
 <body>
-    <main class="wrap">
-        <div class="eyebrow">Plano Recomendado GERADO</div>
-        <h1 id="headline">Seu corpo pede uma versão mais segura do desafio</h1>
-
-        <div class="timer-box">
-            <span class="timer-text">Atenção! Seu acesso seguro será apagado em:</span>
-            <span class="timer-value" id="countdown">15:00</span>
-        </div>
-
-        <p class="lead" id="lead">Com base na sua avaliação, o sistema do Calistenia Pro recomenda a adaptação certa.
-            Devido à alta demanda do servidor, seguramos sua vaga estruturada por apenas 15 minutos.</p>
-
-        <section class="card">
-            <div class="result-badge">✓ Resultado baseado na sua avaliação</div>
-            <div class="plan-title" id="plan-title">Versão adaptada do desafio 21 dias</div>
-            <p class="plan-text" id="plan-text"></p>
-            <div class="chips" id="chips"></div>
+    <main class="page">
+        <section class="hero">
+            <div class="eyebrow">plano recomendado</div>
+            <h1 id="headline">Seu corpo precisa de uma versao mais segura do desafio</h1>
+            <p class="lead" id="lead">Com base nas suas respostas, o Calistenia Pro indica a rota que faz mais sentido para voce entrar em ritmo com mais confianca.</p>
         </section>
 
-        <section class="card">
-            <div class="plan-title">O que você recebe</div>
-            <div class="list">
-                <div class="item">
-                    <strong>Treino ajustado às suas dores</strong>
-                    <span>O sistema escolhe versões específicas de exercícios para ombro, joelho e lombar quando
-                        necessário.</span>
-                </div>
-                <div class="item">
-                    <strong>Progressão de 21 dias</strong>
-                    <span>Você entra em rotina com um plano diário e progressivo, pensado para treino em casa.</span>
-                </div>
-                <div class="item">
-                    <strong>Acesso imediato pelo app</strong>
-                    <span>Após a compra, você entra com seu e-mail e começa o desafio sem depender de academia.</span>
-                </div>
-            </div>
+        <section class="stack">
+            <article class="card">
+                <div class="badge">resultado gerado a partir da sua avaliacao</div>
+                <div class="section-title" id="plan-title">Versao adaptada do desafio 21 dias</div>
+                <p class="section-copy" id="plan-text"></p>
+                <div class="chips" id="chips"></div>
+            </article>
 
-            <div class="price-anchor">
-                <div class="price-item strike">
-                    <span>Personal + Academia</span>
-                    <span>R$ 350,00</span>
-                </div>
-                <div class="price-item strike">
-                    <span>Assessorias Genéricas</span>
-                    <span>R$ 130,00</span>
-                </div>
-                <div class="price-item highlight">
-                    <span>Calistenia Pro (Seu Plano Oficial)</span>
-                    <span>R$ 29,90 hoje</span>
-                </div>
-            </div>
+            <article class="card">
+                <div class="section-title">O que muda no seu caso</div>
+                <div class="grid two" id="insight-grid"></div>
+            </article>
 
-            <div class="actions">
-                <a class="btn btn-primary" id="checkout-btn" href="https://go.hotmart.com/V105066772S?dp=1">QUERO
-                    LIBERAR MEU ACESSO AGORA</a>
-                <a class="btn btn-secondary" href="quiz.html">REFZER A AVALIAÇÃO</a>
-            </div>
-            <p class="small">Oferta de entrada por R$ 29,90 com acesso imediato ao desafio.</p>
+            <article class="card">
+                <div class="section-title">O que voce recebe ao entrar</div>
+                <div class="grid two" id="deliverables-grid"></div>
+            </article>
+
+            <article class="card offer-card">
+                <div class="timer-box">
+                    Sua condicao especial desta pagina encerra em
+                    <strong id="countdown-timer">15:00</strong>
+                </div>
+
+                <div class="prices">
+                    <div class="price-box">
+                        <div class="price-label">personal ou academia</div>
+                        <div class="price-value">R$ 350</div>
+                        <div class="price-sub">por mes</div>
+                    </div>
+                    <div class="price-box highlight">
+                        <div class="price-label">calistenia pro</div>
+                        <div class="price-value">R$ 29,90</div>
+                        <div class="price-sub">pagamento unico</div>
+                    </div>
+                </div>
+
+                <a class="cta-btn" id="checkout-btn" href="https://go.hotmart.com/V105066772S?dp=1">QUERO LIBERAR MEU ACESSO AGORA</a>
+                <p class="cta-sub" id="cta-sub">Acesso imediato pelo app. Voce entra com o mesmo email da compra e ja comeca sua avaliacao dentro da area do aluno.</p>
+                <div class="link-row">
+                    <a class="back-link" href="quiz.html">Refazer avaliacao</a>
+                </div>
+            </article>
         </section>
     </main>
 
@@ -317,72 +347,177 @@
         var data = raw ? JSON.parse(raw) : { pains: [], level: 'iniciante', goal: 'comecar' };
 
         var painMap = {
-            ombro: 'Proteção para Ombro',
-            joelho: 'Proteção para Joelho',
-            lombar: 'Proteção para Lombar'
+            ombro: 'protecao para ombro',
+            joelho: 'protecao para joelho',
+            lombar: 'protecao para lombar'
         };
 
-        var hasPain = data.pains && data.pains.length > 0;
-        var headline = hasPain
-            ? 'Seu plano ideal é a versão adaptada do Calistenia Pro'
-            : 'Seu perfil combina com a versão padrão do Calistenia Pro';
-        var lead = hasPain
-            ? 'Você indicou limitações físicas, então a melhor rota é começar com treinos adaptados para proteger as regiões mais sensíveis e manter constância.'
-            : 'Você não indicou limitações físicas no momento. A recomendação é seguir a versão padrão do desafio, com progressão diária e treino em casa.';
-        var planText = hasPain
-            ? 'Sua avaliação mostra que o produto precisa respeitar dores e limitações já no início. Por isso, o sistema vai priorizar versões mais seguras dos exercícios e adaptar os dias em que houver risco de sobrecarga.'
-            : 'Sua avaliação mostra que você pode seguir a progressão principal do desafio. Ainda assim, o sistema mantém a lógica de progressão por dias para evitar excesso e ajudar na constância.';
+        var goalLabel = data.goal === 'fortalecer' ? 'foco em fortalecimento' : 'foco em comecar sem se machucar';
+        var levelLabel = data.level === 'intermediario' ? 'perfil intermediario' : 'perfil iniciante';
+        var hasPain = Array.isArray(data.pains) && data.pains.length > 0;
+
+        function buildScenario(input) {
+            var scenario = {
+                headline: '',
+                lead: '',
+                planTitle: '',
+                planText: '',
+                chips: [],
+                insights: [],
+                deliverables: [],
+                ctaSub: ''
+            };
+
+            scenario.chips.push(levelLabel);
+            scenario.chips.push(goalLabel);
+
+            if (hasPain) {
+                scenario.headline = 'Seu melhor caminho hoje e a versao adaptada do Calistenia Pro';
+                scenario.planTitle = 'Plano adaptado com progressao de 21 dias';
+
+                if (input.goal === 'fortalecer') {
+                    scenario.lead = 'Voce quer fortalecer, mas indicou limitacoes fisicas. A melhor rota nao e treinar no impulso. E fortalecer com progressao controlada e selecao mais segura de exercicios.';
+                    scenario.planText = 'Seu plano precisa equilibrar evolucao e protecao. Por isso, o sistema recomenda uma versao adaptada do desafio, com exercicios pensados para reduzir risco nas regioes mais sensiveis sem tirar sua sensacao de progresso.';
+                } else {
+                    scenario.lead = 'Como voce quer comecar sem se machucar e ainda marcou dores ou limitacoes, a versao adaptada e a escolha mais coerente para entrar em rotina sem travar no meio do caminho.';
+                    scenario.planText = 'Seu plano recomendado prioriza seguranca, constancia e confianca. Em vez de te jogar numa progressao generica, ele ajusta o inicio para proteger as regioes mais sensiveis e fazer voce conseguir continuar.';
+                }
+
+                scenario.insights = [
+                    { title: 'Menos risco de sobrecarga', text: 'O treino evita empurrar seu corpo para uma versao padrao que pode piorar desconfortos logo na primeira semana.' },
+                    { title: 'Mais chance de constancia', text: 'Quando o plano respeita seu ponto de partida, voce consegue manter frequencia e chegar mais longe nos 21 dias.' },
+                    { title: 'Adaptacao nas regioes certas', text: 'O app usa sua avaliacao para filtrar variacoes mais coerentes para ombro, joelho e lombar.' },
+                    { title: 'Progressao sem chute', text: 'Voce nao precisa adivinhar o que fazer. O desafio ja entra com direcao e com uma logica diaria.' }
+                ];
+            } else {
+                scenario.headline = 'Seu perfil combina com a versao padrao do Calistenia Pro';
+                scenario.planTitle = 'Plano padrao com progressao diaria de 21 dias';
+
+                if (input.goal === 'fortalecer') {
+                    scenario.lead = 'Como voce quer fortalecer e nao sinalizou limitacoes agora, a recomendacao e seguir a versao principal do desafio com progressao diaria para ganhar ritmo e evolucao.';
+                    scenario.planText = 'Seu plano recomendado e a versao padrao do Calistenia Pro. Ela foi pensada para treino em casa com progressao de 21 dias, combinando praticidade com uma estrutura clara para fortalecer seu corpo.';
+                } else {
+                    scenario.lead = 'Como voce quer comecar do jeito certo e nao informou limitacoes hoje, a versao padrao ja e suficiente para colocar seu corpo em movimento com progressao organizada.';
+                    scenario.planText = 'Seu plano recomendado nao precisa de adaptacoes extras neste momento. A versao padrao ja entrega um caminho mais direto para criar consistencia, entrar em rotina e evoluir sem depender de academia.';
+                }
+
+                scenario.insights = [
+                    { title: 'Progressao mais limpa', text: 'Voce entra direto na rota principal do desafio, sem etapas extras e sem improviso.' },
+                    { title: 'Treino em casa com direcao', text: 'O foco aqui e praticidade: abrir o app, ver o dia e executar o que ja foi planejado.' },
+                    { title: 'Mais constancia nos 21 dias', text: 'A estrutura diaria ajuda voce a nao depender de motivacao aleatoria para treinar.' },
+                    { title: 'Foco em resultado realista', text: 'Sem promessa absurda. A proposta e construir ritmo e fortalecimento com uma progressao clara.' }
+                ];
+            }
+
+            scenario.deliverables = [
+                { title: 'Area do aluno com acesso imediato', text: 'Comprou, entrou. O app libera seu inicio usando o mesmo email da compra.' },
+                { title: 'Treinos organizados por dia', text: 'Cada dia do desafio ja vem estruturado para voce saber exatamente o que fazer.' },
+                { title: 'Protecao por perfil fisico', text: hasPain ? 'Seu resultado ja aponta a versao adaptada para preservar as regioes mais sensiveis.' : 'Mesmo na versao padrao, o sistema segue uma progressao pensada para evitar exagero.' },
+                { title: 'Formato simples de seguir', text: input.level === 'intermediario' ? 'Sem enrolacao. Um plano mais objetivo para quem ja treina e quer organizacao.' : 'Um caminho mais claro para quem esta saindo do zero ou quer retomar com seguranca.' }
+            ];
+
+            scenario.ctaSub = hasPain
+                ? 'Voce vai entrar no app e seguir a versao adaptada recomendada para o seu caso, com foco em seguranca e continuidade.'
+                : 'Voce vai entrar no app e seguir a versao padrao recomendada para o seu perfil, com progressao diaria e acesso imediato.';
+
+            return scenario;
+        }
+
+        function appendCard(container, title, text) {
+            var box = document.createElement('div');
+            box.className = 'insight';
+            box.innerHTML = '<strong>' + title + '</strong><span>' + text + '</span>';
+            container.appendChild(box);
+        }
+
+        function applyScenario(scenario) {
+            document.getElementById('headline').textContent = scenario.headline;
+            document.getElementById('lead').textContent = scenario.lead;
+            document.getElementById('plan-title').textContent = scenario.planTitle;
+            document.getElementById('plan-text').textContent = scenario.planText;
+            document.getElementById('cta-sub').textContent = scenario.ctaSub;
+
+            var chips = document.getElementById('chips');
+            scenario.chips.forEach(function (label) {
+                var chip = document.createElement('div');
+                chip.className = 'chip';
+                chip.textContent = label;
+                chips.appendChild(chip);
+            });
+
+            if (hasPain) {
+                data.pains.forEach(function (pain) {
+                    var chip = document.createElement('div');
+                    chip.className = 'chip';
+                    chip.textContent = painMap[pain] || pain;
+                    chips.appendChild(chip);
+                });
+            } else {
+                var noPainChip = document.createElement('div');
+                noPainChip.className = 'chip';
+                noPainChip.textContent = 'sem limitacoes informadas';
+                chips.appendChild(noPainChip);
+            }
+
+            var insightGrid = document.getElementById('insight-grid');
+            scenario.insights.forEach(function (item) {
+                appendCard(insightGrid, item.title, item.text);
+            });
+
+            var deliverablesGrid = document.getElementById('deliverables-grid');
+            scenario.deliverables.forEach(function (item) {
+                appendCard(deliverablesGrid, item.title, item.text);
+            });
+        }
+
+        function buildCheckoutLink(baseUrl, payload) {
+            try {
+                var url = new URL(baseUrl);
+                url.searchParams.set('src', 'quiz');
+                url.searchParams.set('quiz_level', payload.level || 'iniciante');
+                url.searchParams.set('quiz_goal', payload.goal || 'comecar');
+                url.searchParams.set('quiz_pains', (payload.pains || []).length ? payload.pains.join('-') : 'none');
+                return url.toString();
+            } catch (error) {
+                return baseUrl;
+            }
+        }
 
         fbq('track', 'ViewContent', { content_name: 'Resultado Calistenia Pro' });
 
-        document.getElementById('headline').innerText = headline;
-        document.getElementById('lead').innerText = lead;
-        document.getElementById('plan-title').innerText = hasPain ? 'Versão adaptada do desafio 21 dias' : 'Versão padrão do desafio 21 dias';
-        document.getElementById('plan-text').innerText = planText;
-
-        var chips = document.getElementById('chips');
-        if (hasPain) {
-            data.pains.forEach(function (pain) {
-                var chip = document.createElement('div');
-                chip.className = 'chip';
-                chip.innerText = painMap[pain] || pain;
-                chips.appendChild(chip);
-            });
-        } else {
-            var chip = document.createElement('div');
-            chip.className = 'chip';
-            chip.innerText = 'Sem limitações físicas informadas';
-            chips.appendChild(chip);
-        }
+        var scenario = buildScenario(data);
+        applyScenario(scenario);
 
         var checkoutBtn = document.getElementById('checkout-btn');
-        if (checkoutBtn) {
-            checkoutBtn.addEventListener('click', function () {
-                fbq('track', 'InitiateCheckout', { value: 29.90, currency: 'BRL' });
+        checkoutBtn.href = buildCheckoutLink(checkoutBtn.href, data);
+        checkoutBtn.addEventListener('click', function () {
+            fbq('track', 'InitiateCheckout', {
+                value: 29.90,
+                currency: 'BRL',
+                level: data.level || 'iniciante',
+                goal: data.goal || 'comecar',
+                pains: (data.pains || []).join(',') || 'none'
             });
-        }
+        });
 
-        var chipLevel = document.createElement('div');
-        chipLevel.className = 'chip';
-        chipLevel.innerText = data.level === 'iniciante' ? 'Perfil iniciante' : 'Perfil intermediário';
-        chips.appendChild(chipLevel);
+        function startTimer(durationSeconds, display) {
+            var timer = durationSeconds;
+            var interval = setInterval(function () {
+                var minutes = parseInt(timer / 60, 10);
+                var seconds = parseInt(timer % 60, 10);
 
-        // Timer Logic (Escassez CRO)
-        var timeInSecs = 15 * 60;
-        var display = document.querySelector('#countdown');
-        function startTimer() {
-            var timer = timeInSecs, minutes, seconds;
-            setInterval(function () {
-                minutes = parseInt(timer / 60, 10);
-                seconds = parseInt(timer % 60, 10);
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-                display.textContent = minutes + ":" + seconds;
-                if (--timer < 0) { timer = 0; }
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+                display.textContent = minutes + ':' + seconds;
+
+                if (--timer < 0) {
+                    clearInterval(interval);
+                    display.textContent = '00:00';
+                }
             }, 1000);
         }
-        startTimer();
+
+        startTimer(60 * 15, document.getElementById('countdown-timer'));
     </script>
 </body>
-
 </html>
