@@ -159,7 +159,7 @@
             background: linear-gradient(180deg, rgba(255, 90, 31, 0.11), rgba(255, 90, 31, 0.04));
         }
 
-        .timer-box {
+        .offer-note {
             text-align: center;
             border: 1px solid rgba(255, 90, 31, 0.24);
             border-radius: 18px;
@@ -171,13 +171,12 @@
             font-size: 0.92rem;
         }
 
-        .timer-box strong {
+        .offer-note strong {
             display: block;
             margin-top: 4px;
             color: var(--primary);
-            font-family: "Orbitron", sans-serif;
-            font-size: 1.18rem;
-            letter-spacing: 0.08em;
+            font-size: 0.96rem;
+            letter-spacing: 0.02em;
         }
 
         .prices {
@@ -260,6 +259,36 @@
             text-decoration: none;
         }
 
+        .mobile-toggle {
+            display: none;
+            width: 100%;
+            margin-top: 12px;
+            border: 1px solid rgba(255, 90, 31, 0.2);
+            border-radius: 14px;
+            background: rgba(255, 90, 31, 0.08);
+            color: #ffd7c8;
+            padding: 12px 14px;
+            font: inherit;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        @media (max-width: 767px) {
+            .page { padding: 20px 14px 34px; }
+            .hero { gap: 12px; }
+            h1 { font-size: 1.95rem; }
+            .lead { font-size: 0.96rem; }
+            .card { padding: 18px 16px; border-radius: 20px; }
+            .section-copy { font-size: 0.9rem; }
+            .badge, .chip { font-size: 0.72rem; }
+            .price-box { padding: 14px; }
+            .price-value { font-size: 1.32rem; }
+            .cta-btn { padding: 16px 18px; }
+            .cta-sub { font-size: 0.8rem; }
+            .mobile-toggle { display: block; }
+            .grid.two.is-collapsed .insight:nth-child(n+3) { display: none; }
+        }
+
         @media (min-width: 768px) {
             .page { padding: 28px 22px 52px; }
             .card { padding: 22px; }
@@ -315,9 +344,9 @@
             </article>
 
             <article class="card offer-card">
-                <div class="timer-box">
-                    Sua condicao especial desta pagina encerra em
-                    <strong id="countdown-timer">15:00</strong>
+                <div class="offer-note">
+                    Sua avaliacao ja definiu a rota recomendada.
+                    <strong>O proximo passo e entrar enquanto esse contexto ainda esta fresco.</strong>
                 </div>
 
                 <div class="prices">
@@ -334,7 +363,7 @@
                 </div>
 
                 <a class="cta-btn" id="checkout-btn" href="https://go.hotmart.com/V105066772S?dp=1">QUERO LIBERAR MEU ACESSO AGORA</a>
-                <p class="cta-sub" id="cta-sub">Acesso imediato pelo app. Voce entra com o mesmo email da compra e ja comeca sua avaliacao dentro da area do aluno.</p>
+                <p class="cta-sub" id="cta-sub">Acesso imediato pelo app. Seu perfil segue junto para deixar sua entrada mais clara na area do aluno.</p>
                 <div class="link-row">
                     <a class="back-link" href="quiz.html">Refazer avaliacao</a>
                 </div>
@@ -343,8 +372,37 @@
     </main>
 
     <script>
-        var raw = localStorage.getItem('calpro_quiz_result');
-        var data = raw ? JSON.parse(raw) : { pains: [], level: 'iniciante', goal: 'comecar' };
+        function getStoredQuizResult() {
+            var params = new URLSearchParams(window.location.search);
+            var encoded = params.get('q');
+
+            if (encoded) {
+                try {
+                    var fromQuery = JSON.parse(encoded);
+                    sessionStorage.setItem('calpro_quiz_result', JSON.stringify(fromQuery));
+                    localStorage.setItem('calpro_quiz_result', JSON.stringify(fromQuery));
+                    return fromQuery;
+                } catch (error) {}
+            }
+
+            var sessionRaw = sessionStorage.getItem('calpro_quiz_result');
+            if (sessionRaw) {
+                try {
+                    return JSON.parse(sessionRaw);
+                } catch (error) {}
+            }
+
+            var localRaw = localStorage.getItem('calpro_quiz_result');
+            if (localRaw) {
+                try {
+                    return JSON.parse(localRaw);
+                } catch (error) {}
+            }
+
+            return { pains: [], level: 'iniciante', goal: 'comecar' };
+        }
+
+        var data = getStoredQuizResult();
 
         var painMap = {
             ombro: 'protecao para ombro',
@@ -470,6 +528,27 @@
             });
         }
 
+        function setupMobileToggle(gridId, label) {
+            if (window.innerWidth >= 768) return;
+
+            var grid = document.getElementById(gridId);
+            if (!grid || grid.children.length <= 2) return;
+
+            grid.classList.add('is-collapsed');
+
+            var toggle = document.createElement('button');
+            toggle.type = 'button';
+            toggle.className = 'mobile-toggle';
+            toggle.textContent = 'Ver mais ' + label;
+
+            toggle.addEventListener('click', function () {
+                var collapsed = grid.classList.toggle('is-collapsed');
+                toggle.textContent = collapsed ? 'Ver mais ' + label : 'Ver menos ' + label;
+            });
+
+            grid.insertAdjacentElement('afterend', toggle);
+        }
+
         function buildCheckoutLink(baseUrl, payload) {
             try {
                 var url = new URL(baseUrl);
@@ -487,6 +566,8 @@
 
         var scenario = buildScenario(data);
         applyScenario(scenario);
+        setupMobileToggle('insight-grid', 'detalhes');
+        setupMobileToggle('deliverables-grid', 'itens');
 
         var checkoutBtn = document.getElementById('checkout-btn');
         checkoutBtn.href = buildCheckoutLink(checkoutBtn.href, data);
@@ -499,25 +580,6 @@
                 pains: (data.pains || []).join(',') || 'none'
             });
         });
-
-        function startTimer(durationSeconds, display) {
-            var timer = durationSeconds;
-            var interval = setInterval(function () {
-                var minutes = parseInt(timer / 60, 10);
-                var seconds = parseInt(timer % 60, 10);
-
-                minutes = minutes < 10 ? '0' + minutes : minutes;
-                seconds = seconds < 10 ? '0' + seconds : seconds;
-                display.textContent = minutes + ':' + seconds;
-
-                if (--timer < 0) {
-                    clearInterval(interval);
-                    display.textContent = '00:00';
-                }
-            }, 1000);
-        }
-
-        startTimer(60 * 15, document.getElementById('countdown-timer'));
     </script>
 </body>
 </html>
