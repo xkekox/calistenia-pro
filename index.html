@@ -121,6 +121,24 @@
             color: #e2e2e2;
         }
 
+        .meta-note {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #d2d2d2;
+            font-size: 0.82rem;
+            line-height: 1.4;
+        }
+
+        .meta-note::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: var(--ok);
+            box-shadow: 0 0 10px rgba(38, 208, 124, 0.5);
+        }
+
         .hero-cta {
             display: grid;
             gap: 10px;
@@ -360,7 +378,8 @@
                     <a class="btn btn-primary" href="quiz.html">FAZER AVALIACAO AGORA</a>
                     <a class="btn btn-secondary" href="app.html">JA SOU ALUNO</a>
                 </div>
-                <p class="hero-note">Avaliacao rapida, resultado imediato e acesso por apenas R$ 29,90 no plano recomendado.</p>
+                <p class="meta-note">Produto digital com acesso imediato e pagamento unico.</p>
+                <p class="hero-note">Primeiro voce ve o plano recomendado para o seu perfil. Depois decide se quer liberar o acesso completo.</p>
             </div>
 
             <aside class="hero-card">
@@ -427,8 +446,8 @@
             </article>
 
             <article class="card price-card">
-                <div class="section-title">Entrada simples, risco baixo</div>
-                <p class="section-copy">Se comparado a personal, academia e tentativa no improviso, o custo de entrada e baixo e o ganho de clareza e muito maior.</p>
+                <div class="section-title">Depois de entender o seu plano, a decisao fica simples</div>
+                <p class="section-copy">A proposta nao e te empurrar para um treino aleatorio. E mostrar um caminho mais seguro e organizado por um valor de entrada baixo.</p>
                 <div class="price-line">
                     <div class="price-box old">
                         <div class="price-label">personal ou academia</div>
