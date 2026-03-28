@@ -967,17 +967,68 @@
         // ======================================================
         function today() { return new Date().toLocaleDateString('pt-BR'); }
 
+        function normalizeQuizResult(parsed) {
+            if (!parsed || typeof parsed !== 'object') return null;
+            return {
+                pains: Array.isArray(parsed.pains) ? parsed.pains : [],
+                level: parsed.level || 'iniciante',
+                goal: parsed.goal || 'comecar'
+            };
+        }
+
+        function persistQuizResult(quizResult) {
+            if (!quizResult) return;
+            try {
+                var serialized = JSON.stringify(quizResult);
+                sessionStorage.setItem('calpro_quiz_result', serialized);
+                localStorage.setItem('calpro_quiz_result', serialized);
+            } catch (e) {
+                console.warn('[framework:DEV] Falha ao persistir resultado do quiz.', e);
+            }
+        }
+
+        function getQuizResultFromUrl() {
+            try {
+                var params = new URLSearchParams(window.location.search);
+                var encoded = params.get('q');
+                if (encoded) {
+                    return normalizeQuizResult(JSON.parse(encoded));
+                }
+
+                var level = params.get('quiz_level');
+                var goal = params.get('quiz_goal');
+                var pains = params.get('quiz_pains');
+
+                if (!level && !goal && !pains) return null;
+
+                return normalizeQuizResult({
+                    level: level || 'iniciante',
+                    goal: goal || 'comecar',
+                    pains: !pains || pains === 'none' ? [] : pains.split('-').filter(Boolean)
+                });
+            } catch (e) {
+                console.warn('[framework:DEV] Falha ao ler resultado do quiz pela URL.', e);
+                return null;
+            }
+        }
+
         function getQuizResult() {
             try {
+                var fromUrl = getQuizResultFromUrl();
+                if (fromUrl) {
+                    persistQuizResult(fromUrl);
+                    return fromUrl;
+                }
+
+                var sessionRaw = sessionStorage.getItem('calpro_quiz_result');
+                if (sessionRaw) {
+                    var sessionParsed = normalizeQuizResult(JSON.parse(sessionRaw));
+                    if (sessionParsed) return sessionParsed;
+                }
+
                 var raw = localStorage.getItem('calpro_quiz_result');
                 if (!raw) return null;
-                var parsed = JSON.parse(raw);
-                if (!parsed || typeof parsed !== 'object') return null;
-                return {
-                    pains: Array.isArray(parsed.pains) ? parsed.pains : [],
-                    level: parsed.level || 'iniciante',
-                    goal: parsed.goal || 'comecar'
-                };
+                return normalizeQuizResult(JSON.parse(raw));
             } catch (e) {
                 console.warn('[framework:DEV] Falha ao ler resultado do quiz.', e);
                 return null;
