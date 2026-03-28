@@ -256,9 +256,9 @@
 
         .cta-copy {
             color: #ffd7c8;
-            font-size: 0.9rem;
-            line-height: 1.45;
-            margin-bottom: 12px;
+            font-size: 0.88rem;
+            line-height: 1.4;
+            margin-bottom: 10px;
         }
 
         .cta-btn {
@@ -279,7 +279,7 @@
         .cta-note {
             margin-top: 10px;
             color: #d5d5d5;
-            font-size: 0.84rem;
+            font-size: 0.8rem;
             text-align: center;
         }
 
@@ -296,6 +296,24 @@
         }
 
         .alert.visible { display: block; }
+
+        @media (max-width: 767px) {
+            .page { padding: 20px 14px 34px; }
+            .hero { gap: 14px; }
+            h1 { font-size: 2rem; }
+            .lead { font-size: 0.98rem; }
+            .proof-bar { gap: 10px; }
+            .proof-item { gap: 10px; padding: 12px; }
+            .proof-copy span { font-size: 0.84rem; }
+            .quiz-shell { gap: 12px; }
+            .card { padding: 18px 16px; border-radius: 20px; }
+            .card-desc { font-size: 0.84rem; }
+            .option { padding: 13px 14px; }
+            .option-copy strong { font-size: 0.9rem; }
+            .option-copy span { font-size: 0.8rem; }
+            .cta-card { padding: 14px; }
+            .cta-btn { padding: 16px 18px; }
+        }
 
         @media (min-width: 768px) {
             .page { padding: 28px 22px 54px; }
@@ -329,7 +347,7 @@
         <section class="hero">
             <div class="eyebrow">avaliacao inteligente</div>
             <h1>Descubra qual plano faz sentido para o seu corpo hoje</h1>
-            <p class="lead">Responda em menos de 1 minuto. O resultado mostra a versao do Calistenia Pro que melhor combina com seu nivel atual, seu objetivo e suas limitacoes fisicas.</p>
+            <p class="lead">Responda rapido. O resultado mostra a rota mais coerente para o seu nivel, objetivo e eventuais limitacoes fisicas.</p>
 
             <div class="proof-bar">
                 <div class="proof-item">
@@ -350,7 +368,7 @@
                     <div class="proof-icon">03</div>
                     <div class="proof-copy">
                         <strong>Mais rapido</strong>
-                        <span>Sem formulario gigante. Apenas o necessario para recomendar o plano certo.</span>
+                        <span>Poucas respostas e recomendacao direta, sem formulario gigante.</span>
                     </div>
                 </div>
             </div>
@@ -490,9 +508,9 @@
 
         <div class="cta-wrap">
             <div class="cta-card">
-                <p class="cta-copy">Seu resultado fica pronto agora e mostra a rota ideal para voce entrar no Calistenia Pro com mais seguranca e mais clareza.</p>
+                <p class="cta-copy">Seu resultado sai agora com a rota recomendada para entrar no Calistenia Pro com mais clareza.</p>
                 <button class="cta-btn" id="quiz-submit">VER MEU PLANO RECOMENDADO</button>
-                <p class="cta-note">Resultado imediato, sem cadastro nesta etapa.</p>
+                <p class="cta-note">Resultado imediato. Nenhum cadastro nesta etapa.</p>
             </div>
         </div>
     </main>
@@ -559,8 +577,9 @@
             };
 
             fbq('track', 'Lead', { content_name: 'Quiz Concluido Calistenia Pro' });
+            sessionStorage.setItem('calpro_quiz_result', JSON.stringify(payload));
             localStorage.setItem('calpro_quiz_result', JSON.stringify(payload));
-            window.location.href = 'resultado.html';
+            window.location.href = 'resultado.html?q=' + encodeURIComponent(JSON.stringify(payload));
         });
     </script>
 </body>
