@@ -937,7 +937,7 @@
 
     <script src="database.js?v=2"></script>
     <script>
-        console.log('[AIOS:DEV] Banco de dados local carregado. Overrides de video virao do Supabase quando disponivel.');
+        console.log('[framework:DEV] Banco de dados local carregado. Overrides de video virao do Supabase quando disponivel.');
         fbq('track', 'ViewContent', { content_name: 'App Calistenia Pro' });
 
         // ======================================================
@@ -979,7 +979,7 @@
                     goal: parsed.goal || 'comecar'
                 };
             } catch (e) {
-                console.warn('[AIOS:DEV] Falha ao ler resultado do quiz.', e);
+                console.warn('[framework:DEV] Falha ao ler resultado do quiz.', e);
                 return null;
             }
         }
@@ -1085,7 +1085,7 @@
                     studentProfile = JSON.parse(saved);
                 }
             } catch (e) {
-                console.warn('[AIOS:DEV] Falha ao carregar perfil do aluno.', e);
+                console.warn('[framework:DEV] Falha ao carregar perfil do aluno.', e);
             }
 
             if (!studentProfile || typeof studentProfile !== 'object') {
@@ -1101,7 +1101,7 @@
             try {
                 localStorage.setItem(profileStorageKey(studentProfile.email || u.email || ''), JSON.stringify(studentProfile));
             } catch (e) {
-                console.warn('[AIOS:DEV] Falha ao salvar perfil do aluno.', e);
+                console.warn('[framework:DEV] Falha ao salvar perfil do aluno.', e);
             }
         }
 
@@ -1256,7 +1256,7 @@
             }
             const screen = document.getElementById(id);
             if (!screen) {
-                console.error('[AIOS:DEV] Erro: Tela nao encontrada:', id);
+                console.error('[framework:DEV] Erro: Tela nao encontrada:', id);
                 return;
             }
             document.querySelectorAll('.screen').forEach(function (s) { s.classList.remove('active'); });
@@ -1307,13 +1307,13 @@
                     }
                     if (event === 'PASSWORD_RECOVERY' && session && session.user && !TEST_MODE) {
                         handlePasswordRecovery(session.user).catch(function (e) {
-                            console.error('[AIOS:DEV] Erro na recuperacao de senha:', e);
+                            console.error('[framework:DEV] Erro na recuperacao de senha:', e);
                             setAuthStatus('Nao foi possivel redefinir sua senha.', true);
                         });
                     }
                     if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session && session.user && !TEST_MODE) {
                         hydrateAuthenticatedUser(session.user).catch(function (e) {
-                            console.error('[AIOS:DEV] Erro ao hidratar sessao do Supabase:', e);
+                            console.error('[framework:DEV] Erro ao hidratar sessao do Supabase:', e);
                         });
                     }
                 });
@@ -1327,7 +1327,7 @@
                 if (!u.email) return;
                 localStorage.setItem(STORAGE_PREFIX + u.email, JSON.stringify(u));
             } catch (e) {
-                console.error('[AIOS:DEV] Falha ao salvar no localStorage:', e);
+                console.error('[framework:DEV] Falha ao salvar no localStorage:', e);
             }
         }
 
@@ -1348,7 +1348,7 @@
         function save() {
             saveLocal();
             saveCloud().catch(function (e) {
-                console.error('[AIOS:DEV] Falha ao salvar no Supabase:', e);
+                console.error('[framework:DEV] Falha ao salvar no Supabase:', e);
             });
         }
 
@@ -1361,7 +1361,7 @@
                     return true;
                 }
             } catch (e) {
-                console.error('[AIOS:DEV] Erro ao carregar dados do usuario (JSON corrompido). Resetando...', e);
+                console.error('[framework:DEV] Erro ao carregar dados do usuario (JSON corrompido). Resetando...', e);
                 localStorage.removeItem(STORAGE_PREFIX + email);
             }
             return false;
@@ -1423,13 +1423,13 @@
             try {
                 loadedRemote = await loadCloud(authUser);
             } catch (e) {
-                console.error('[AIOS:DEV] Falha ao carregar progresso do Supabase:', e);
+                console.error('[framework:DEV] Falha ao carregar progresso do Supabase:', e);
             }
 
             try {
                 await loadSupabaseVideoOverrides();
             } catch (e) {
-                console.error('[AIOS:DEV] Falha ao carregar overrides de video do Supabase:', e);
+                console.error('[framework:DEV] Falha ao carregar overrides de video do Supabase:', e);
             }
 
             if (!loadedRemote) {
@@ -1462,7 +1462,7 @@
                     if (drafts[ex.id] !== undefined) ex.video_url = drafts[ex.id];
                 });
             } catch (e) {
-                console.warn('[AIOS:DEV] Falha ao aplicar rascunhos de video do admin.', e);
+                console.warn('[framework:DEV] Falha ao aplicar rascunhos de video do admin.', e);
             }
         }
 
@@ -1485,7 +1485,7 @@
         // LOGIN
         // ======================================================
         async function login() {
-            console.log('[AIOS:DEV] Iniciando processo de login...');
+            console.log('[framework:DEV] Iniciando processo de login...');
             var emailInput = document.getElementById('email');
             var passwordInput = document.getElementById('password');
             if (!emailInput) {
@@ -1501,7 +1501,7 @@
             }
 
             u.email = e;
-            console.log('[AIOS:DEV] Email validado:', e);
+            console.log('[framework:DEV] Email validado:', e);
 
             if (cloudEnabled) {
                 var password = passwordInput ? passwordInput.value.trim() : '';
@@ -1530,7 +1530,7 @@
             }
 
             if (loadLocal(e)) {
-                console.log('[AIOS:DEV] Usuario carregado com sucesso.');
+                console.log('[framework:DEV] Usuario carregado com sucesso.');
                 if (authName) syncStudentProfileName(authName);
                 applyQuizPrefill();
                 if (u.assessmentDone) {
@@ -1539,7 +1539,7 @@
                     showScreen('screen-assessment');
                 }
             } else {
-                console.log('[AIOS:DEV] Novo usuario detectado ou erro no load. Iniciando avaliacao.');
+                console.log('[framework:DEV] Novo usuario detectado ou erro no load. Iniciando avaliacao.');
                 u = blankUser(e, '');
                 if (authName) syncStudentProfileName(authName);
                 if (applyQuizPrefill()) {
@@ -1825,7 +1825,7 @@
         }
 
         function openDashboard() {
-            console.log('[AIOS:DEV] Abrindo Dashboard...');
+            console.log('[framework:DEV] Abrindo Dashboard...');
 
             if (!u.completedDays || typeof u.completedDays !== 'object') {
                 u.completedDays = {};
@@ -1941,7 +1941,7 @@
                         playPromise.catch(function () {});
                     }
                 } catch (e) {
-                    console.warn('[AIOS:DEV] Falha ao reproduzir video local:', e);
+                    console.warn('[framework:DEV] Falha ao reproduzir video local:', e);
                 }
                 return;
             }
@@ -2087,7 +2087,7 @@
                 try {
                     await loadSupabaseVideoOverrides();
                 } catch (e) {
-                    console.error('[AIOS:DEV] Falha ao sincronizar videos publicados no Supabase:', e);
+                    console.error('[framework:DEV] Falha ao sincronizar videos publicados no Supabase:', e);
                 }
                 var sessionResponse = await supabaseClient.auth.getSession();
                 if (sessionResponse.data && sessionResponse.data.session && sessionResponse.data.session.user) {
@@ -2121,4 +2121,6 @@
 </body>
 
 </html>
+
+
 
